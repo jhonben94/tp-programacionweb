@@ -1,11 +1,121 @@
 <div class="main-content">
   <div class="container-fluid">
-    <button mat-raised-button class="btn btn-default">Default</button>
-    <button mat-raised-button class="btn btn-primary">Primary</button>
-    <button mat-raised-button class="btn btn-info">Info</button>
-    <button mat-raised-button class="btn btn-success">Success</button>
-    <button mat-raised-button class="btn btn-warning">Warning</button>
-    <button mat-raised-button class="btn btn-danger">Danger</button>
-    <button mat-raised-button class="btn btn-rose">Rose</button>
+    <div class="row">
+      <div class="card">
+        <form
+          [formGroup]="filtrosForm"
+          (keydown.enter)="$event.preventDefault()"
+        >
+          <div class="card-header card-header-rose card-header-icon">
+            <div class="card-icon">
+              <i class="material-icons">category</i>
+            </div>
+            <h4 class="card-title"><strong>Categoria</strong></h4>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <mat-form-field class="example-full-width">
+                <input
+                  type="text"
+                  matInput
+                  placeholder="Descripción"
+                  formControlName="descripcion"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="card-footer text-right">
+            <div class="form-group">
+              <button
+                mat-raised-button
+                type="button"
+                class="btn btn-rose"
+                (click)="openDialog()"
+              >
+                Buscar
+              </button>
+              <button
+                mat-raised-button
+                type="button"
+                class="btn btn-default btn-fill btn-wd"
+              >
+                Limpiar
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="card">
+        <table
+          mat-table
+          [dataSource]="data"
+          class="example-table"
+          matSort
+          matSortActive="id"
+          matSortDisableClear
+          matSortDirection="desc"
+        >
+          <!-- Number Column -->
+          <ng-container matColumnDef="number">
+            <th mat-header-cell *matHeaderCellDef>#</th>
+            <td mat-cell *matCellDef="let row; let i = index">{{ i + 1 }}</td>
+          </ng-container>
+          <!-- definicion dinamica de las columnas -->
+          <ng-container
+            *ngFor="let columna of listaColumnas"
+            [matColumnDef]="columna.matDef"
+          >
+            <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+              <strong>{{ columna.descripcion }}</strong>
+            </th>
+            <td mat-cell *matCellDef="let row">
+              {{ mostrarCampo(row, columna) }}
+            </td>
+          </ng-container>
+
+          <!-- Accion Column -->
+          <ng-container matColumnDef="accion">
+            <th mat-header-cell *matHeaderCellDef>
+              <strong>ACCIONES</strong>
+            </th>
+            <td mat-cell *matCellDef="let row" style="text-align: center">
+              <button
+                ngbTooltip="Eliminar"
+                *ngIf="tienePermisoBtn('ELIMINAR_AREA') && row.activo"
+                mat-button
+              >
+                <mat-icon data-action-type="eliminar">cancel</mat-icon>
+              </button>
+              <button
+                ngbTooltip="Editar"
+                *ngIf="tienePermisoBtn('EDITAR_AREA') && row.activo"
+                mat-button
+              >
+                <mat-icon data-action-type="editar">edit</mat-icon>
+              </button>
+              <button
+                ngbTooltip="Activar"
+                *ngIf="tienePermisoBtn('ACTIVAR_AREA') && !row.activo"
+                mat-button
+              >
+                <mat-icon data-action-type="activar">check_circle</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumns"
+            (click)="acciones(row, $event)"
+          ></tr>
+        </table>
+        <mat-paginator
+          [length]="resultsLength"
+          [pageSizeOptions]="opcionPagina"
+          showFirstLastButtons
+        ></mat-paginator>
+      </div>
+    </div>
   </div>
 </div>
