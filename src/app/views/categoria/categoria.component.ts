@@ -20,6 +20,12 @@ import { CategoriaEditComponent } from "./categoria-edit/categoria-edit.componen
 })
 export class CategoriaComponent implements OnInit {
   /**
+   * @type {boolean}
+   * @description Flag que maneja el Expansion Panel de filtros
+   */
+  expanded = true;
+
+  /**
    * @type {object}
    * @description Form para capturar los datos a ser utilizado como filtros para la grilla
    */
@@ -48,7 +54,7 @@ export class CategoriaComponent implements OnInit {
    * @type {Array}
    * @description Definicion de las columnas a ser mostradas
    */
-  displayedColumns: string[] = ["idCategoria", "descripcion"];
+  displayedColumns: string[] = ["idCategoria", "descripcion", "accion"];
 
   opcionPagina = CANTIDAD_PAG_LIST;
 
@@ -127,11 +133,51 @@ export class CategoriaComponent implements OnInit {
   openDialog(): void {
     const dialogRef = this.dialog.open(CategoriaEditComponent, {
       width: "400px",
-      data: { name: "this.name", animal: "this.animal" },
+      data: {
+        title: "Agregar Categoria",
+        label: "Se agrega categoria correspondiente.",
+        entity: {
+          descripcion: "descripcion",
+        },
+      },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       console.log("The dialog was closed" + result);
     });
+  }
+
+  acciones(data, e) {
+    console.log(data);
+
+    const actionType = e.target.getAttribute("data-action-type");
+    switch (actionType) {
+      case "activar":
+        break;
+      case "eliminar":
+        break;
+      case "editar":
+        break;
+      default:
+        break;
+    }
+  }
+  mostrarCampo(row, columna) {
+    if (columna.relacion) {
+      if (row[columna.label] == null) return "";
+      return row[columna.label][columna.columnaRelacion];
+    } else {
+      if (typeof columna.estados != "undefined") {
+        const label = row[columna.label]
+          ? columna.estados[0]
+          : columna.estados[1];
+        return label;
+      }
+      return row[columna.label];
+    }
+  }
+  limpiar() {
+    this.filtrosForm.reset();
+    this.buscar();
   }
 }

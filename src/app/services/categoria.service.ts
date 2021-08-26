@@ -26,6 +26,6 @@ export class CategoriaService {
     return this.http.get(this.recurosBaseURL + id);
   }
   listarRecurso(filtros) {
-    return this.http.get(this.recurosBaseURL, { params: filtros });
+    return this.http.get(this.recurosBaseURL);
   }
 }
