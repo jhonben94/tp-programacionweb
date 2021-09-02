@@ -113,10 +113,10 @@ export class CategoriaComponent implements OnInit {
           this.isLoadingResults = true;
           const params = {
             cantidad: this.paginator.pageSize,
-            pagina: this.paginator.pageIndex + 1,
-            sortBy: this.sort.active,
-            sortOrder: this.sort.direction,
-            filtros: JSON.stringify(deleteEmptyData(this.filtrosForm.value)),
+            inicio: this.retornaInicio(),
+            orderBy: this.sort.active,
+            orderDir: this.sort.direction,
+            ejemplo: JSON.stringify(deleteEmptyData(this.filtrosForm.value)),
           };
           return this.service.listarRecurso(params);
         }),
@@ -124,7 +124,7 @@ export class CategoriaComponent implements OnInit {
           // Flip flag to show that loading has finished.
           this.isLoadingResults = false;
           this.isRateLimitReached = false;
-          this.resultsLength = data.total;
+          this.resultsLength = data.totalDatos;
           return data.lista;
         }),
         catchError(() => {
@@ -184,5 +184,17 @@ export class CategoriaComponent implements OnInit {
   limpiar() {
     this.filtrosForm.reset();
     this.buscar();
+  }
+  retornaInicio() {
+    const cantidad = this.paginator.pageSize;
+    let inicio: any = this.paginator.pageIndex;
+
+    if (this.paginator.pageIndex > 0) {
+      return (
+        cantidad *
+        (0 == this.paginator.pageIndex ? 1 : this.paginator.pageIndex)
+      );
+    }
+    return inicio;
   }
 }
