@@ -6,7 +6,7 @@ import { environment } from "src/environments/environment";
   providedIn: "root",
 })
 export class CategoriaService {
-  recurosBaseURL: string = environment.URL_BASE + "/categoria/";
+  recurosBaseURL: string = environment.URL_BASE + "/categoria";
   constructor(private http: HttpClient) {}
 
   activarRecurso(id) {

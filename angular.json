@@ -25,7 +25,8 @@
             ],
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              { "glob": "data.json", "input": "./", "output": "./assets/" }
             ],
             "styles": [
               "node_modules/perfect-scrollbar/css/perfect-scrollbar.css",
@@ -86,8 +87,8 @@
               "buildOptimizer": true
             },
             "development": {
-             "buildOptimizer": false,
-             "optimization": {
+              "buildOptimizer": false,
+              "optimization": {
                 "scripts": true,
                 "styles": {
                   "minify": false,
@@ -95,8 +96,8 @@
                 },
                 "fonts": true
               },
-             "outputHashing": "all",
-           }
+              "outputHashing": "all"
+            }
           }
         },
         "serve": {
@@ -159,22 +160,14 @@
               "node_modules/jqvmap/dist/maps/jquery.vmap.world.js",
               "node_modules/jquery-validation/dist/jquery.validate.min.js"
             ],
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ]
+            "assets": ["src/favicon.ico", "src/assets"]
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": [
-              "src/tsconfig.app.json",
-              "src/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "tsConfig": ["src/tsconfig.app.json", "src/tsconfig.spec.json"],
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -199,9 +192,7 @@
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": "e2e/tsconfig.e2e.json",
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }

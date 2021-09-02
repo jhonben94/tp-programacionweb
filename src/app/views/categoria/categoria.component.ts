@@ -52,12 +52,15 @@ export class CategoriaComponent implements OnInit {
 
   /**
    * @type {Array}
-   * @description Definicion de las columnas a ser mostradas
+   * @description Definicion de las columnas a ser visualizadas
    */
   displayedColumns: string[] = ["idCategoria", "descripcion", "accion"];
 
   opcionPagina = CANTIDAD_PAG_LIST;
-
+  /**
+   * @type {Array}
+   * @description Definicion dinamica de las columnas a ser visualizadas
+   */
   listaColumnas: any = [
     {
       matDef: "idCategoria",
@@ -70,6 +73,10 @@ export class CategoriaComponent implements OnInit {
       descripcion: "DESCRICIÓN",
     },
   ];
+  /**
+   * @type {Array}
+   * @description Lista que contiene los valores para la grilla
+   */
   data: any[] = [];
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -136,9 +143,7 @@ export class CategoriaComponent implements OnInit {
       data: {
         title: "Agregar Categoria",
         label: "Se agrega categoria correspondiente.",
-        entity: {
-          descripcion: "descripcion",
-        },
+        entity: {},
       },
     });
 

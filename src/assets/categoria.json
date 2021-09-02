@@ -1,0 +1,25 @@
+{
+  "lista": [
+    {
+      "idCategoria": 1,
+      "descripcion": "categoria 1"
+    },
+    {
+      "idCategoria": 2,
+      "descripcion": "categoria 2"
+    },
+    {
+      "idCategoria": 3,
+      "descripcion": "categoria 3"
+    },
+    {
+      "idCategoria": 4,
+      "descripcion": "categoria 4"
+    },
+    {
+      "idCategoria": 5,
+      "descripcion": "categoria 5"
+    }
+  ],
+  "total": 5
+}
