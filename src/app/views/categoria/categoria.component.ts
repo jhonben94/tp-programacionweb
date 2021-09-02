@@ -12,6 +12,7 @@ import { startWith, switchMap, catchError, map } from "rxjs/operators";
 import { CategoriaService } from "src/app/services";
 import { MatDialog } from "@angular/material/dialog";
 import { CategoriaEditComponent } from "./categoria-edit/categoria-edit.component";
+import swal from "sweetalert2";
 
 @Component({
   selector: "app-categoria",
@@ -116,6 +117,7 @@ export class CategoriaComponent implements OnInit {
             inicio: this.retornaInicio(),
             orderBy: this.sort.active,
             orderDir: this.sort.direction,
+            like: "S",
             ejemplo: JSON.stringify(deleteEmptyData(this.filtrosForm.value)),
           };
           return this.service.listarRecurso(params);
@@ -139,7 +141,7 @@ export class CategoriaComponent implements OnInit {
 
   openDialog(): void {
     const dialogRef = this.dialog.open(CategoriaEditComponent, {
-      width: "400px",
+      width: "",
       data: {
         title: "Agregar Categoria",
         label: "Se agrega categoria correspondiente.",
@@ -147,21 +149,102 @@ export class CategoriaComponent implements OnInit {
       },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log("The dialog was closed" + result);
+    dialogRef.afterClosed().subscribe((result: any) => {
+      console.log(result);
+
+      if (result) {
+        result.flagVisible = "S";
+        this.service.agregarRecurso(result).subscribe((res) => {
+          console.log(res);
+
+          swal
+            .fire({
+              title: "Éxito!",
+              text: "El registro fue creado correctamente.",
+              icon: "success",
+              customClass: {
+                confirmButton: "btn btn-success",
+              },
+              buttonsStyling: false,
+            })
+            .then(() => {
+              this.limpiar();
+            });
+        });
+      }
     });
   }
 
   acciones(data, e) {
-    console.log(data);
-
+    const id = "idCategoria";
     const actionType = e.target.getAttribute("data-action-type");
     switch (actionType) {
       case "activar":
         break;
       case "eliminar":
+        swal
+          .fire({
+            title: "Está seguro que desea eliminar el registro?",
+            text: "Esta acción no se podrá revertir!",
+            icon: "warning",
+            showCancelButton: true,
+            customClass: {
+              confirmButton: "btn btn-success",
+              cancelButton: "btn btn-danger",
+            },
+            confirmButtonText: "Eliminar",
+            buttonsStyling: false,
+          })
+          .then((result) => {
+            if (result.value) {
+              this.service.eliminarRecurso(data[id]).subscribe((res) => {
+                swal
+                  .fire({
+                    title: "Deleted!",
+                    text: "Your file has been deleted.",
+                    icon: "success",
+                    customClass: {
+                      confirmButton: "btn btn-success",
+                    },
+                    buttonsStyling: false,
+                  })
+                  .then(() => {
+                    this.limpiar();
+                  });
+              });
+            }
+          });
         break;
       case "editar":
+        const dialogRef = this.dialog.open(CategoriaEditComponent, {
+          width: "",
+          data: {
+            title: "Modificar Categoria",
+            label: "Se modifica categoria: " + data[id],
+            entity: data,
+          },
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result) {
+            this.service.modificarRecurso(result, data[id]).subscribe((res) => {
+              console.log(res);
+              swal
+                .fire({
+                  title: "Éxito!",
+                  text: "El registro fue creado correctamente.",
+                  icon: "success",
+                  customClass: {
+                    confirmButton: "btn btn-success",
+                  },
+                  buttonsStyling: false,
+                })
+                .then(() => {
+                  this.limpiar();
+                });
+            });
+          }
+        });
         break;
       default:
         break;

@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { environment } from "src/environments/environment";
 
@@ -6,24 +6,33 @@ import { environment } from "src/environments/environment";
   providedIn: "root",
 })
 export class CategoriaService {
-  recurosBaseURL: string = environment.URL_BASE + "/categoria";
-  constructor(private http: HttpClient) {}
+  recurosBaseURL: string = environment.URL_BASE + "/categoria/";
+  headers = new HttpHeaders({ "Content-Type": "application/json" });
 
+  constructor(private http: HttpClient) {}
   activarRecurso(id) {
     return this.http.put(this.recurosBaseURL + id + "/activar", {});
   }
 
   agregarRecurso(recurso) {
-    return this.http.post(this.recurosBaseURL, recurso);
+    return this.http.post(this.recurosBaseURL, recurso, {
+      headers: this.headers,
+    });
   }
   modificarRecurso(recurso, id) {
-    return this.http.put(this.recurosBaseURL + id, recurso);
+    return this.http.put(this.recurosBaseURL + id, recurso, {
+      headers: this.headers,
+    });
   }
   eliminarRecurso(id) {
-    return this.http.delete(this.recurosBaseURL + id);
+    return this.http.delete(this.recurosBaseURL + id, {
+      headers: this.headers,
+    });
   }
   obtenerRecurso(id) {
-    return this.http.get(this.recurosBaseURL + id);
+    return this.http.get(this.recurosBaseURL + id, {
+      headers: this.headers,
+    });
   }
   listarRecurso(ejemplo) {
     return this.http.get(this.recurosBaseURL, { params: ejemplo });

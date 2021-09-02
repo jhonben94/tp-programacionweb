@@ -7,17 +7,6 @@
         </div>
         <h4 class="card-title"><strong>Categoria</strong></h4>
       </div>
-      <div mat-dialog-actions>
-        <button
-          (click)="openDialog()"
-          data-toggle="modal"
-          tabindex="-1"
-          role="dialog"
-          mat-raised-button
-        >
-          Agregar
-        </button>
-      </div>
 
       <mat-accordion>
         <mat-expansion-panel [(expanded)]="expanded" class="mat-elevation-z0">
@@ -44,7 +33,22 @@
               </div>
             </div>
             <div class="card-footer">
-              <div class="row" style="text-align: right">
+              <div class="row">
+                <div class="form-group">
+                  <button
+                    class="btn btn-accent"
+                    (click)="openDialog()"
+                    data-toggle="modal"
+                    tabindex="-1"
+                    role="dialog"
+                    mat-raised-button
+                    color="warn"
+                  >
+                    Agregar
+                  </button>
+                </div>
+              </div>
+              <div class="row">
                 <div class="form-group">
                   <button
                     mat-raised-button
@@ -112,11 +116,11 @@
                   >edit</mat-icon
                 >
               </button>
-              <button ngbTooltip="Activar" mat-button>
+              <!-- <button ngbTooltip="Activar" mat-button>
                 <mat-icon color="accent" data-action-type="activar"
                   >check_circle</mat-icon
                 >
-              </button>
+              </button> -->
             </td>
           </ng-container>
 
