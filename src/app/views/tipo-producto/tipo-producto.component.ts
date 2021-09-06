@@ -9,17 +9,17 @@ import {
   deleteEmptyData,
 } from "../../utlis";
 import { startWith, switchMap, catchError, map } from "rxjs/operators";
-import { CategoriaService } from "src/app/services";
+import { CategoriaService, TipoProductoService } from "src/app/services";
 import { MatDialog } from "@angular/material/dialog";
-import { CategoriaEditComponent } from "./categoria-edit/categoria-edit.component";
 import swal from "sweetalert2";
+import { TipoProductoEditComponent } from "./tipo-producto-edit/tipo-producto-edit.component";
 
 @Component({
-  selector: "app-categoria",
-  templateUrl: "./categoria.component.html",
-  styleUrls: ["./categoria.component.css"],
+  selector: "app-tipo-producto",
+  templateUrl: "./tipo-producto.component.html",
+  styleUrls: ["./tipo-producto.component.css"],
 })
-export class CategoriaComponent implements OnInit {
+export class TipoProductoComponent implements OnInit {
   /**
    * @type {boolean}
    * @description Flag que maneja el Expansion Panel de filtros
@@ -55,7 +55,12 @@ export class CategoriaComponent implements OnInit {
    * @type {Array}
    * @description Definicion de las columnas a ser visualizadas
    */
-  displayedColumns: string[] = ["idCategoria", "descripcion", "accion"];
+  displayedColumns: string[] = [
+    "idTipoProducto",
+    "descripcion",
+    "idCategoria",
+    "accion",
+  ];
 
   opcionPagina = CANTIDAD_PAG_LIST;
   /**
@@ -64,14 +69,21 @@ export class CategoriaComponent implements OnInit {
    */
   listaColumnas: any = [
     {
-      matDef: "idCategoria",
-      label: "idCategoria",
-      descripcion: "CATEGORÍA",
+      matDef: "idTipoProducto",
+      label: "idTipoProducto",
+      descripcion: "TIPO PROD.",
     },
     {
       matDef: "descripcion",
       label: "descripcion",
       descripcion: "DESCRICIÓN",
+    },
+    {
+      matDef: "idCategoria",
+      label: "idCategoria",
+      descripcion: "CATEGORÍA",
+      relacion: true,
+      columnaRelacion: "descripcion",
     },
   ];
   /**
@@ -79,21 +91,31 @@ export class CategoriaComponent implements OnInit {
    * @description Lista que contiene los valores para la grilla
    */
   data: any[] = [];
+  /**
+   * @type {Array}
+   * @description Lista que contiene los de las categorias
+   */
+  categorias: any[] = [];
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   constructor(
     private fb: FormBuilder,
-    private service: CategoriaService,
+    private service: TipoProductoService,
+    private categoriaService: CategoriaService,
     public dialog: MatDialog
   ) {
     this.filtrosForm = this.fb.group({
       descripcion: [""],
+      idCategoria: [""],
     });
   }
 
   ngOnInit(): void {
     this.paginator.pageSize = CANTIDAD_PAG_DEFAULT;
+    this.categoriaService.listarRecurso({}).subscribe((res: any) => {
+      this.categorias = res.lista;
+    });
   }
 
   ngAfterViewInit() {
@@ -140,12 +162,13 @@ export class CategoriaComponent implements OnInit {
   }
 
   openDialog(): void {
-    const dialogRef = this.dialog.open(CategoriaEditComponent, {
+    const dialogRef = this.dialog.open(TipoProductoEditComponent, {
       width: "",
       data: {
         title: "Agregar Categoria",
         label: "Se agrega categoria correspondiente.",
         entity: {},
+        lista: this.categorias,
       },
     });
 
@@ -176,7 +199,7 @@ export class CategoriaComponent implements OnInit {
   }
 
   acciones(data, e) {
-    const id = "idCategoria";
+    const id = "idTipoProducto";
     const actionType = e.target.getAttribute("data-action-type");
     switch (actionType) {
       case "activar":
@@ -216,7 +239,7 @@ export class CategoriaComponent implements OnInit {
           });
         break;
       case "editar":
-        const dialogRef = this.dialog.open(CategoriaEditComponent, {
+        const dialogRef = this.dialog.open(TipoProductoEditComponent, {
           width: "",
           data: {
             title: "Modificar Categoria",
@@ -265,7 +288,7 @@ export class CategoriaComponent implements OnInit {
     }
   }
   limpiar() {
-    this.filtrosForm.reset();
+    this.filtrosForm.reset({});
     this.buscar();
   }
   retornaInicio() {

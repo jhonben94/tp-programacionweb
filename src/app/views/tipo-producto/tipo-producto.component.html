@@ -3,9 +3,9 @@
     <div class="card">
       <div class="card-header card-header-primary card-header-icon">
         <div class="card-icon">
-          <i class="material-icons">category</i>
+          <i class="material-icons">content_paste</i>
         </div>
-        <h4 class="card-title"><strong>Categoria</strong></h4>
+        <h4 class="card-title"><strong>Tipo Producto</strong></h4>
       </div>
 
       <mat-accordion>
@@ -22,14 +22,30 @@
           >
             <div class="card-body">
               <div class="row">
-                <mat-form-field class="example-full-width">
-                  <input
-                    type="text"
-                    matInput
-                    placeholder="Descripción"
-                    formControlName="descripcion"
-                  />
-                </mat-form-field>
+                <div class="col-md-6">
+                  <mat-form-field>
+                    <input
+                      type="text"
+                      matInput
+                      placeholder="DESCRIPCIÓN"
+                      formControlName="descripcion"
+                    />
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-6">
+                  <mat-form-field>
+                    <mat-label>CATEGORÍA</mat-label>
+                    <mat-select formControlName="idCategoria">
+                      <mat-option
+                        *ngFor="let item of categorias"
+                        [value]="item.idCategoria"
+                      >
+                        {{ item.descripcion }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
               </div>
             </div>
             <div class="card-footer">
@@ -79,7 +95,7 @@
           [dataSource]="data"
           class="example-table"
           matSort
-          matSortActive="idCategoria"
+          matSortActive="idTipoProducto"
           matSortDisableClear
           matSortDirection="desc"
         >
@@ -118,10 +134,10 @@
                 >
               </button>
               <!-- <button ngbTooltip="Activar" mat-button>
-                <mat-icon color="accent" data-action-type="activar"
-                  >check_circle</mat-icon
-                >
-              </button> -->
+                        <mat-icon color="accent" data-action-type="activar"
+                          >check_circle</mat-icon
+                        >
+                      </button> -->
             </td>
           </ng-container>
 

@@ -1,0 +1,31 @@
+<h1 mat-dialog-title>{{ data.title }}</h1>
+<div mat-dialog-content>
+  <p>{{ data.label }}</p>
+  <mat-form-field appearance="fill">
+    <mat-label>Descripción</mat-label>
+    <input matInput [(ngModel)]="entity.descripcion" />
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>CATEGORÍA</mat-label>
+    <mat-select [(ngModel)]="entity.idCategoria">
+      <mat-option *ngFor="let item of lista" [value]="item.idCategoria">
+        {{ item.descripcion }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+<div class="text-right">
+  <div mat-dialog-actions>
+    <button mat-raised-button class="btn btn-default" (click)="onNoClick()">
+      Cancelar
+    </button>
+    <button
+      mat-raised-button
+      class="btn btn-primary"
+      [mat-dialog-close]="entity"
+    >
+      Confirmar
+    </button>
+  </div>
+</div>
