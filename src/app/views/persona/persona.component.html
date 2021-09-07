@@ -3,9 +3,9 @@
     <div class="card">
       <div class="card-header card-header-primary card-header-icon">
         <div class="card-icon">
-          <i class="material-icons">category</i>
+          <i class="material-icons">person</i>
         </div>
-        <h4 class="card-title"><strong>Categoria</strong></h4>
+        <h4 class="card-title"><strong>Personas</strong></h4>
       </div>
 
       <mat-accordion>
@@ -22,14 +22,42 @@
           >
             <div class="card-body">
               <div class="row">
-                <mat-form-field class="example-full-width">
-                  <input
-                    type="text"
-                    matInput
-                    placeholder="DESCRIPCIÓN"
-                    formControlName="descripcion"
-                  />
-                </mat-form-field>
+                <div class="col-6">
+                  <mat-form-field class="example-full-width">
+                    <input
+                      type="text"
+                      matInput
+                      placeholder="NOMBRE"
+                      formControlName="nombre"
+                    />
+                  </mat-form-field>
+                  <mat-form-field class="example-full-width">
+                    <input
+                      type="text"
+                      matInput
+                      placeholder="APELLIDO"
+                      formControlName="apellido"
+                    />
+                  </mat-form-field>
+                </div>
+                <div class="col-6">
+                  <mat-form-field class="example-full-width">
+                    <input
+                      type="text"
+                      matInput
+                      placeholder="CÉDULA"
+                      formControlName="cedula"
+                    />
+                  </mat-form-field>
+                  <mat-form-field class="example-full-width">
+                    <input
+                      type="text"
+                      matInput
+                      placeholder="RUC"
+                      formControlName="ruc"
+                    />
+                  </mat-form-field>
+                </div>
               </div>
             </div>
             <div class="card-footer">
@@ -37,10 +65,7 @@
                 <div class="form-group">
                   <button
                     class="btn btn-accent"
-                    (click)="openDialog()"
-                    data-toggle="modal"
-                    tabindex="-1"
-                    role="dialog"
+                    (click)="agregar()"
                     mat-raised-button
                     color="warn"
                   >
@@ -79,7 +104,7 @@
           [dataSource]="data"
           class="example-table"
           matSort
-          matSortActive="idCategoria"
+          matSortActive="idPersona"
           matSortDisableClear
           matSortDirection="desc"
         >
@@ -118,10 +143,10 @@
                 >
               </button>
               <!-- <button ngbTooltip="Activar" mat-button>
-                <mat-icon color="accent" data-action-type="activar"
-                  >check_circle</mat-icon
-                >
-              </button> -->
+                        <mat-icon color="accent" data-action-type="activar"
+                          >check_circle</mat-icon
+                        >
+                      </button> -->
             </td>
           </ng-container>
 

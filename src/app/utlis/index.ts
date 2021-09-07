@@ -6,6 +6,32 @@ export function deleteEmptyData(data) {
   }
   return data;
 }
+
+export function formatearFecha(date) {
+  var day = date.getDate() + "";
+  var month = date.getMonth() + 1 + "";
+  var year = date.getFullYear() + "";
+  var hour = date.getHours() + "";
+  var minutes = date.getMinutes() + "";
+  var seconds = date.getSeconds() + "";
+
+  day = checkZero(day);
+  month = checkZero(month);
+  year = checkZero(year);
+  hour = checkZero(hour);
+  minutes = checkZero(minutes);
+  seconds = checkZero(seconds);
+  return (
+    day + "-" + month + "-" + year + " " + hour + ":" + minutes + ":" + seconds
+  );
+}
+
+function checkZero(data) {
+  if (data.length == 1) {
+    data = "0" + data;
+  }
+  return data;
+}
 export const CANTIDAD_PAG_LIST = [5, 10, 25, 100];
 export const CANTIDAD_PAG_DEFAULT = 10;
 export const CARACTER_MINIMO_AUTOCOMPLETE = 3;

@@ -1,0 +1,130 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header card-header-primary card-header-icon">
+        <div class="card-icon">
+          <i class="material-icons">person</i>
+        </div>
+        <h4 class="card-title">
+          <strong>{{ titulo }}</strong>
+        </h4>
+      </div>
+
+      <form [formGroup]="form" (keydown.enter)="$event.preventDefault()">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-6">
+              <mat-form-field class="example-full-width">
+                <input
+                  type="text"
+                  matInput
+                  placeholder="NOMBRE"
+                  formControlName="nombre"
+                  required
+                />
+              </mat-form-field>
+              <mat-form-field class="example-full-width">
+                <input
+                  type="text"
+                  matInput
+                  placeholder="APELLIDO"
+                  formControlName="apellido"
+                  required
+                />
+              </mat-form-field>
+              <mat-form-field>
+                <input
+                  matInput
+                  [matDatepicker]="picker"
+                  placeholder="FECHA NACIMIENTO"
+                  formControlName="fechaNacimiento"
+                  (click)="picker.open()"
+                  required
+                />
+                <mat-datepicker-toggle
+                  matSuffix
+                  [for]="picker"
+                ></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+
+              <mat-form-field class="example-full-width">
+                <input
+                  type="email"
+                  matInput
+                  placeholder="CORREO"
+                  formControlName="email"
+                  required
+                />
+              </mat-form-field>
+            </div>
+            <div class="col-6">
+              <mat-form-field class="example-full-width">
+                <input
+                  type="text"
+                  matInput
+                  placeholder="CÉDULA"
+                  formControlName="cedula"
+                  required
+                />
+              </mat-form-field>
+              <mat-form-field class="example-full-width">
+                <input
+                  type="text"
+                  matInput
+                  placeholder="RUC"
+                  formControlName="ruc"
+                  required
+                />
+              </mat-form-field>
+
+              <mat-form-field class="example-full-width">
+                <input
+                  type="text"
+                  matInput
+                  placeholder="TÉLEFONO"
+                  formControlName="telefono"
+                  required
+                />
+              </mat-form-field>
+              <mat-form-field>
+                <mat-label>TIPO PERSONA</mat-label>
+                <mat-select formControlName="tipoPersona">
+                  <mat-option
+                    *ngFor="let item of listaTipoPersona"
+                    [value]="item.codigo"
+                  >
+                    {{ item.codigo }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="row">
+            <div class="form-group">
+              <button
+                mat-raised-button
+                type="button"
+                class="btn btn-primary"
+                (click)="confirmar()"
+                [disabled]="!form.valid"
+              >
+                Confirmar
+              </button>
+              <button
+                mat-raised-button
+                type="button"
+                class="btn btn-default btn-fill btn-wd"
+                (click)="cancelar()"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

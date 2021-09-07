@@ -10,6 +10,10 @@ import { routes } from "./views-routing.module";
 import { CategoriaEditComponent } from "./categoria/categoria-edit/categoria-edit.component";
 import { TipoProductoComponent } from "./tipo-producto/tipo-producto.component";
 import { TipoProductoEditComponent } from "./tipo-producto/tipo-producto-edit/tipo-producto-edit.component";
+import { PresentacionProductoComponent } from './presentacion-producto/presentacion-producto.component';
+import { PresentacionProductoEditComponent } from './presentacion-producto/presentacion-producto-edit/presentacion-producto-edit.component';
+import { PersonaComponent } from './persona/persona.component';
+import { PersonaEditComponent } from './persona/persona-edit/persona-edit.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +21,10 @@ import { TipoProductoEditComponent } from "./tipo-producto/tipo-producto-edit/ti
     CategoriaEditComponent,
     TipoProductoComponent,
     TipoProductoEditComponent,
+    PresentacionProductoComponent,
+    PresentacionProductoEditComponent,
+    PersonaComponent,
+    PersonaEditComponent,
   ],
   imports: [
     CommonModule,
