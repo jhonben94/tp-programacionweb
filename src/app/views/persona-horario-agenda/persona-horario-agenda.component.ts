@@ -1,18 +1,18 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { MatPaginator } from "@angular/material/paginator";
-import { MatSort } from "@angular/material/sort";
-import { merge, of } from "rxjs";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { merge, of } from 'rxjs';
 import {
   CANTIDAD_PAG_DEFAULT,
   CANTIDAD_PAG_LIST,
   deleteEmptyData,
-} from "../../utlis";
-import { startWith, switchMap, catchError, map } from "rxjs/operators";
-import { CategoriaService } from "src/app/services";
-import { MatDialog } from "@angular/material/dialog";
+} from '../../utlis';
+import { startWith, switchMap, catchError, map } from 'rxjs/operators';
+import {PersonaHorarioAgendaService} from 'src/app/services';
+import { MatDialog } from '@angular/material/dialog';
 
-import swal from "sweetalert2";
+import swal from 'sweetalert2';
 
 
 @Component({
@@ -32,7 +32,7 @@ export class PersonaHorarioAgendaComponent implements OnInit {
    * @description Form para capturar los datos a ser utilizado como filtros para la grilla
    */
   filtrosForm = this.fb.group({
-    descripcion: [""],
+    descripcion: [''],
   });
 
   /**
@@ -56,7 +56,14 @@ export class PersonaHorarioAgendaComponent implements OnInit {
    * @type {Array}
    * @description Definicion de las columnas a ser visualizadas
    */
-  displayedColumns: string[] = ["idCategoria", "descripcion", "accion"];
+  displayedColumns: string[] = [
+      'idPersonaHorarioAgenda',
+      'dia',
+      'horaApertura',
+      'horaCierre',
+      'intervaloMinutos',
+      'accion',
+  ];
 
   opcionPagina = CANTIDAD_PAG_LIST;
   /**
@@ -64,16 +71,31 @@ export class PersonaHorarioAgendaComponent implements OnInit {
    * @description Definicion dinamica de las columnas a ser visualizadas
    */
   listaColumnas: any = [
-    {
-      matDef: "idCategoria",
-      label: "idCategoria",
-      descripcion: "CATEGORÍA",
+      {
+      matDef: 'idPersonaHorarioAgenda',
+      label: 'idPersonaHorarioAgenda',
+      descripcion: 'ID',
     },
     {
-      matDef: "descripcion",
-      label: "descripcion",
-      descripcion: "DESCRICIÓN",
+      matDef: 'dia',
+      label: 'dia',
+      descripcion: 'DIA',
     },
+      {
+          matDef: 'horaApertura',
+          label: 'horaApertura',
+          descripcion: 'HORA DE APERTURA',
+      },
+      {
+          matDef: 'horaCierre',
+          label: 'horaCierre',
+          descripcion: 'HORA DE CIERRE',
+      },
+      {
+          matDef: 'intervaloMinutos',
+          label: 'intervaloMinutos',
+          descripcion: 'INTERVALO MINUTOS',
+      },
   ];
   /**
    * @type {Array}
@@ -85,13 +107,21 @@ export class PersonaHorarioAgendaComponent implements OnInit {
 
   constructor(
       private fb: FormBuilder,
-      private service: CategoriaService,
+      private service: PersonaHorarioAgendaService,
       public dialog: MatDialog
   ) {
-    this.filtrosForm = this.fb.group({
-      descripcion: [""],
-    });
-  }
+      this.filtrosForm = this.fb.group({
+          idPersonaHorarioAgenda: [""],
+          dia: [""],
+          horaApertura: [""],
+          horaCierre: [""],
+          intervaloMinutos: [""],
+          ruc: [""],
+          cedula: [""],
+          tipoPersona: [""],
+          fechaNacimiento: [""],
+      });
+    }
 
   ngOnInit(): void {
     this.paginator.pageSize = CANTIDAD_PAG_DEFAULT;
@@ -118,7 +148,7 @@ export class PersonaHorarioAgendaComponent implements OnInit {
                 inicio: this.retornaInicio(),
                 orderBy: this.sort.active,
                 orderDir: this.sort.direction,
-                like: "S",
+                like: 'S',
                 ejemplo: JSON.stringify(deleteEmptyData(this.filtrosForm.value)),
               };
               return this.service.listarRecurso(params);
@@ -142,10 +172,10 @@ export class PersonaHorarioAgendaComponent implements OnInit {
 
   openDialog(): void {
     const dialogRef = this.dialog.open(PersonaHorarioAgendaComponent, {
-      width: "",
+      width: '',
       data: {
-        title: "Agregar Categoria",
-        label: "Se agrega categoria correspondiente.",
+        title: 'Agregar Categoria',
+        label: 'Se agrega categoria correspondiente.',
         entity: {},
       },
     });
@@ -154,17 +184,17 @@ export class PersonaHorarioAgendaComponent implements OnInit {
       console.log(result);
 
       if (result) {
-        result.flagVisible = "S";
+        result.flagVisible = 'S';
         this.service.agregarRecurso(result).subscribe((res) => {
           console.log(res);
 
           swal
               .fire({
-                title: "Éxito!",
-                text: "El registro fue creado correctamente.",
-                icon: "success",
+                title: 'Éxito!',
+                text: 'El registro fue creado correctamente.',
+                icon: 'success',
                 customClass: {
-                  confirmButton: "btn btn-success",
+                  confirmButton: 'btn btn-success',
                 },
                 buttonsStyling: false,
               })
@@ -177,23 +207,23 @@ export class PersonaHorarioAgendaComponent implements OnInit {
   }
 
   acciones(data, e) {
-    const id = "idCategoria";
-    const actionType = e.target.getAttribute("data-action-type");
+    const id = 'idPersonaHorarioAgenda';
+    const actionType = e.target.getAttribute('data-action-type');
     switch (actionType) {
-      case "activar":
+      case 'activar':
         break;
-      case "eliminar":
+      case 'eliminar':
         swal
             .fire({
-              title: "Está seguro que desea eliminar el registro?",
-              text: "Esta acción no se podrá revertir!",
-              icon: "warning",
+              title: 'Está seguro que desea eliminar el registro?',
+              text: 'Esta acción no se podrá revertir!',
+              icon: 'warning',
               showCancelButton: true,
               customClass: {
-                confirmButton: "btn btn-success",
-                cancelButton: "btn btn-danger",
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-danger',
               },
-              confirmButtonText: "Eliminar",
+              confirmButtonText: 'Eliminar',
               buttonsStyling: false,
             })
             .then((result) => {
@@ -201,11 +231,11 @@ export class PersonaHorarioAgendaComponent implements OnInit {
                 this.service.eliminarRecurso(data[id]).subscribe((res) => {
                   swal
                       .fire({
-                        title: "Éxito!",
-                        text: "El registro fue eliminado correctamente.",
-                        icon: "success",
+                        title: 'Éxito!',
+                        text: 'El registro fue eliminado correctamente.',
+                        icon: 'success',
                         customClass: {
-                          confirmButton: "btn btn-success",
+                          confirmButton: 'btn btn-success',
                         },
                         buttonsStyling: false,
                       })
@@ -216,12 +246,12 @@ export class PersonaHorarioAgendaComponent implements OnInit {
               }
             });
         break;
-      case "editar":
+      case 'editar':
         const dialogRef = this.dialog.open(PersonaHorarioAgendaComponent, {
-          width: "",
+          width: '',
           data: {
-            title: "Modificar Categoria",
-            label: "Se modifica categoria: " + data[id],
+            title: 'Modificar Categoria',
+            label: 'Se modifica categoria: ' + data[id],
             entity: data,
           },
         });
@@ -232,11 +262,11 @@ export class PersonaHorarioAgendaComponent implements OnInit {
               console.log(res);
               swal
                   .fire({
-                    title: "Éxito!",
-                    text: "El registro fue creado correctamente.",
-                    icon: "success",
+                    title: 'Éxito!',
+                    text: 'El registro fue creado correctamente.',
+                    icon: 'success',
                     customClass: {
-                      confirmButton: "btn btn-success",
+                      confirmButton: 'btn btn-success',
                     },
                     buttonsStyling: false,
                   })
@@ -253,10 +283,10 @@ export class PersonaHorarioAgendaComponent implements OnInit {
   }
   mostrarCampo(row, columna) {
     if (columna.relacion) {
-      if (row[columna.label] == null) return "";
+      if (row[columna.label] == null) { return ''; }
       return row[columna.label][columna.columnaRelacion];
     } else {
-      if (typeof columna.estados != "undefined") {
+      if (typeof columna.estados != 'undefined') {
         const label = row[columna.label]
             ? columna.estados[0]
             : columna.estados[1];
@@ -271,7 +301,7 @@ export class PersonaHorarioAgendaComponent implements OnInit {
   }
   retornaInicio() {
     const cantidad = this.paginator.pageSize;
-    let inicio: any = this.paginator.pageIndex;
+    const inicio: any = this.paginator.pageIndex;
 
     if (this.paginator.pageIndex > 0) {
       return (

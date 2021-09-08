@@ -3,9 +3,9 @@
         <div class="card">
             <div class="card-header card-header-primary card-header-icon">
                 <div class="card-icon">
-                    <i class="material-icons">category</i>
+                    <i class="material-icons">calendar_today</i>
                 </div>
-                <h4 class="card-title"><strong>Categoria</strong></h4>
+                <h4 class="card-title"><strong>Persona Horario Agenda</strong></h4>
             </div>
 
             <mat-accordion>
@@ -26,8 +26,16 @@
                                     <input
                                             type="text"
                                             matInput
-                                            placeholder="DESCRIPCIÓN"
-                                            formControlName="descripcion"
+                                            placeholder="ID"
+                                            formControlName="idPersonaHorarioAgenda"
+                                    />
+                                </mat-form-field>
+                                <mat-form-field class="example-full-width">
+                                    <input
+                                            type="text"
+                                            matInput
+                                            placeholder="DIA"
+                                            formControlName="dia"
                                     />
                                 </mat-form-field>
                             </div>
@@ -79,7 +87,7 @@
                         [dataSource]="data"
                         class="example-table"
                         matSort
-                        matSortActive="idCategoria"
+                        matSortActive="idPersonaHorarioAgenda"
                         matSortDisableClear
                         matSortDirection="desc"
                 >

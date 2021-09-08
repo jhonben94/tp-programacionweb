@@ -6,7 +6,7 @@ import { environment } from "src/environments/environment";
   providedIn: 'root'
 })
 export class PersonaHorarioAgendaService {
-  recurosBaseURL: string = environment.URL_BASE + "/categoria/";
+  recurosBaseURL: string = environment.URL_BASE + "/personaHorarioAgenda/";
   headers = new HttpHeaders({ "Content-Type": "application/json" });
 
   constructor(private http: HttpClient) {}
