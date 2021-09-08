@@ -5,6 +5,7 @@ import { PersonaEditComponent } from "./persona/persona-edit/persona-edit.compon
 import { PersonaComponent } from "./persona/persona.component";
 import { PresentacionProductoComponent } from "./presentacion-producto/presentacion-producto.component";
 import { TipoProductoComponent } from "./tipo-producto/tipo-producto.component";
+import {PersonaHorarioAgendaComponent} from './persona-horario-agenda/persona-horario-agenda.component';
 
 export const routes: Routes = [
   {
@@ -21,6 +22,10 @@ export const routes: Routes = [
       {
         path: "presentacion-producto",
         component: PresentacionProductoComponent,
+      },
+      {
+        path: "persona-horario-agenda",
+        component: PersonaHorarioAgendaComponent,
       },
       {
         path: "persona",

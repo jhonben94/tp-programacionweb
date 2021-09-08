@@ -14,6 +14,8 @@ import { PresentacionProductoComponent } from './presentacion-producto/presentac
 import { PresentacionProductoEditComponent } from './presentacion-producto/presentacion-producto-edit/presentacion-producto-edit.component';
 import { PersonaComponent } from './persona/persona.component';
 import { PersonaEditComponent } from './persona/persona-edit/persona-edit.component';
+import { PersonaHorarioAgendaComponent } from './persona-horario-agenda/persona-horario-agenda.component';
+import { PersonaHorarioAgendaEditComponent } from './persona-horario-agenda/persona-horario-agenda-edit/persona-horario-agenda-edit.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +27,8 @@ import { PersonaEditComponent } from './persona/persona-edit/persona-edit.compon
     PresentacionProductoEditComponent,
     PersonaComponent,
     PersonaEditComponent,
+    PersonaHorarioAgendaComponent,
+    PersonaHorarioAgendaEditComponent,
   ],
   imports: [
     CommonModule,
