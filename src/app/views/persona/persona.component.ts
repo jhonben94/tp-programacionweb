@@ -20,6 +20,8 @@ import { Router } from "@angular/router";
   styleUrls: ["./persona.component.css"],
 })
 export class PersonaComponent implements OnInit {
+  selectedRow: any;
+
   /**
    * @type {boolean}
    * @description Flag que maneja el Expansion Panel de filtros
@@ -281,5 +283,9 @@ export class PersonaComponent implements OnInit {
       );
     }
     return inicio;
+  }
+
+  onRowClicked(row) {
+    this.selectedRow = row;
   }
 }

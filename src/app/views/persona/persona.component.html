@@ -121,7 +121,12 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
               <strong>{{ columna.descripcion }}</strong>
             </th>
-            <td mat-cell *matCellDef="let row">
+            <td
+              mat-cell
+              *matCellDef="let row"
+              [ngClass]="{ selected: row === selectedRow }"
+              (click)="onRowClicked(row)"
+            >
               {{ mostrarCampo(row, columna) }}
             </td>
           </ng-container>
@@ -131,7 +136,13 @@
             <th mat-header-cell *matHeaderCellDef>
               <strong>ACCIONES</strong>
             </th>
-            <td mat-cell *matCellDef="let row" style="text-align: center">
+            <td
+              mat-cell
+              *matCellDef="let row"
+              style="text-align: center"
+              [ngClass]="{ selected: row === selectedRow }"
+              (click)="onRowClicked(row)"
+            >
               <button ngbTooltip="Eliminar" mat-button>
                 <mat-icon color="warn" data-action-type="eliminar"
                   >cancel</mat-icon
