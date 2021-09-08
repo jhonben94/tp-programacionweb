@@ -1,24 +1,25 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { merge, of } from 'rxjs';
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { MatPaginator } from "@angular/material/paginator";
+import { MatSort } from "@angular/material/sort";
+import { merge, of } from "rxjs";
 import {
   CANTIDAD_PAG_DEFAULT,
   CANTIDAD_PAG_LIST,
   deleteEmptyData,
-} from '../../utlis';
-import { startWith, switchMap, catchError, map } from 'rxjs/operators';
-import {PersonaHorarioAgendaService} from 'src/app/services';
-import { MatDialog } from '@angular/material/dialog';
+  obtenerDia,
+  WEEKDAYS,
+} from "../../utlis";
+import { startWith, switchMap, catchError, map } from "rxjs/operators";
+import { PersonaHorarioAgendaService } from "src/app/services";
+import { MatDialog } from "@angular/material/dialog";
 
-import swal from 'sweetalert2';
-
+import swal from "sweetalert2";
 
 @Component({
-  selector: 'app-persona-horario-agenda',
-  templateUrl: './persona-horario-agenda.component.html',
-  styleUrls: ['./persona-horario-agenda.component.css']
+  selector: "app-persona-horario-agenda",
+  templateUrl: "./persona-horario-agenda.component.html",
+  styleUrls: ["./persona-horario-agenda.component.css"],
 })
 export class PersonaHorarioAgendaComponent implements OnInit {
   /**
@@ -32,7 +33,7 @@ export class PersonaHorarioAgendaComponent implements OnInit {
    * @description Form para capturar los datos a ser utilizado como filtros para la grilla
    */
   filtrosForm = this.fb.group({
-    descripcion: [''],
+    descripcion: [""],
   });
 
   /**
@@ -57,12 +58,12 @@ export class PersonaHorarioAgendaComponent implements OnInit {
    * @description Definicion de las columnas a ser visualizadas
    */
   displayedColumns: string[] = [
-      'idPersonaHorarioAgenda',
-      'dia',
-      'horaApertura',
-      'horaCierre',
-      'intervaloMinutos',
-      'accion',
+    "idPersonaHorarioAgenda",
+    "dia",
+    "horaApertura",
+    "horaCierre",
+    "intervaloMinutos",
+    "accion",
   ];
 
   opcionPagina = CANTIDAD_PAG_LIST;
@@ -71,31 +72,31 @@ export class PersonaHorarioAgendaComponent implements OnInit {
    * @description Definicion dinamica de las columnas a ser visualizadas
    */
   listaColumnas: any = [
-      {
-      matDef: 'idPersonaHorarioAgenda',
-      label: 'idPersonaHorarioAgenda',
-      descripcion: 'ID',
+    {
+      matDef: "idPersonaHorarioAgenda",
+      label: "idPersonaHorarioAgenda",
+      descripcion: "ID",
     },
     {
-      matDef: 'dia',
-      label: 'dia',
-      descripcion: 'DIA',
+      matDef: "dia",
+      label: "dia",
+      descripcion: "DIA",
     },
-      {
-          matDef: 'horaApertura',
-          label: 'horaApertura',
-          descripcion: 'HORA DE APERTURA',
-      },
-      {
-          matDef: 'horaCierre',
-          label: 'horaCierre',
-          descripcion: 'HORA DE CIERRE',
-      },
-      {
-          matDef: 'intervaloMinutos',
-          label: 'intervaloMinutos',
-          descripcion: 'INTERVALO MINUTOS',
-      },
+    {
+      matDef: "horaApertura",
+      label: "horaApertura",
+      descripcion: "HORA DE APERTURA",
+    },
+    {
+      matDef: "horaCierre",
+      label: "horaCierre",
+      descripcion: "HORA DE CIERRE",
+    },
+    {
+      matDef: "intervaloMinutos",
+      label: "intervaloMinutos",
+      descripcion: "INTERVALO MINUTOS",
+    },
   ];
   /**
    * @type {Array}
@@ -104,27 +105,29 @@ export class PersonaHorarioAgendaComponent implements OnInit {
   data: any[] = [];
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
+  listaSemana: { codigo: number; valor: string }[];
 
   constructor(
-      private fb: FormBuilder,
-      private service: PersonaHorarioAgendaService,
-      public dialog: MatDialog
+    private fb: FormBuilder,
+    private service: PersonaHorarioAgendaService,
+    public dialog: MatDialog
   ) {
-      this.filtrosForm = this.fb.group({
-          idPersonaHorarioAgenda: [""],
-          dia: [""],
-          horaApertura: [""],
-          horaCierre: [""],
-          intervaloMinutos: [""],
-          ruc: [""],
-          cedula: [""],
-          tipoPersona: [""],
-          fechaNacimiento: [""],
-      });
-    }
+    this.filtrosForm = this.fb.group({
+      idPersonaHorarioAgenda: [""],
+      dia: [""],
+      horaApertura: [""],
+      horaCierre: [""],
+      intervaloMinutos: [""],
+      ruc: [""],
+      cedula: [""],
+      tipoPersona: [""],
+      fechaNacimiento: [""],
+    });
+  }
 
   ngOnInit(): void {
     this.paginator.pageSize = CANTIDAD_PAG_DEFAULT;
+    this.listaSemana = WEEKDAYS;
   }
 
   ngAfterViewInit() {
@@ -139,43 +142,43 @@ export class PersonaHorarioAgendaComponent implements OnInit {
 
   buscar() {
     merge(this.sort.sortChange, this.paginator.page)
-        .pipe(
-            startWith({}),
-            switchMap(() => {
-              this.isLoadingResults = true;
-              const params = {
-                cantidad: this.paginator.pageSize,
-                inicio: this.retornaInicio(),
-                orderBy: this.sort.active,
-                orderDir: this.sort.direction,
-                like: 'S',
-                ejemplo: JSON.stringify(deleteEmptyData(this.filtrosForm.value)),
-              };
-              return this.service.listarRecurso(params);
-            }),
-            map((data: any) => {
-              // Flip flag to show that loading has finished.
-              this.isLoadingResults = false;
-              this.isRateLimitReached = false;
-              this.resultsLength = data.totalDatos;
-              return data.lista;
-            }),
-            catchError(() => {
-              this.isLoadingResults = false;
-              // Catch if the API has reached its rate limit. Return empty data.
-              this.isRateLimitReached = true;
-              return of([]);
-            })
-        )
-        .subscribe((data) => (this.data = data));
+      .pipe(
+        startWith({}),
+        switchMap(() => {
+          this.isLoadingResults = true;
+          const params = {
+            cantidad: this.paginator.pageSize,
+            inicio: this.retornaInicio(),
+            orderBy: this.sort.active,
+            orderDir: this.sort.direction,
+            like: "S",
+            ejemplo: JSON.stringify(deleteEmptyData(this.filtrosForm.value)),
+          };
+          return this.service.listarRecurso(params);
+        }),
+        map((data: any) => {
+          // Flip flag to show that loading has finished.
+          this.isLoadingResults = false;
+          this.isRateLimitReached = false;
+          this.resultsLength = data.totalDatos;
+          return data.lista;
+        }),
+        catchError(() => {
+          this.isLoadingResults = false;
+          // Catch if the API has reached its rate limit. Return empty data.
+          this.isRateLimitReached = true;
+          return of([]);
+        })
+      )
+      .subscribe((data) => (this.data = data));
   }
 
   openDialog(): void {
     const dialogRef = this.dialog.open(PersonaHorarioAgendaComponent, {
-      width: '',
+      width: "",
       data: {
-        title: 'Agregar Categoria',
-        label: 'Se agrega categoria correspondiente.',
+        title: "Agregar Categoria",
+        label: "Se agrega categoria correspondiente.",
         entity: {},
       },
     });
@@ -184,74 +187,74 @@ export class PersonaHorarioAgendaComponent implements OnInit {
       console.log(result);
 
       if (result) {
-        result.flagVisible = 'S';
+        result.flagVisible = "S";
         this.service.agregarRecurso(result).subscribe((res) => {
           console.log(res);
 
           swal
-              .fire({
-                title: 'Éxito!',
-                text: 'El registro fue creado correctamente.',
-                icon: 'success',
-                customClass: {
-                  confirmButton: 'btn btn-success',
-                },
-                buttonsStyling: false,
-              })
-              .then(() => {
-                this.limpiar();
-              });
+            .fire({
+              title: "Éxito!",
+              text: "El registro fue creado correctamente.",
+              icon: "success",
+              customClass: {
+                confirmButton: "btn btn-success",
+              },
+              buttonsStyling: false,
+            })
+            .then(() => {
+              this.limpiar();
+            });
         });
       }
     });
   }
 
   acciones(data, e) {
-    const id = 'idPersonaHorarioAgenda';
-    const actionType = e.target.getAttribute('data-action-type');
+    const id = "idPersonaHorarioAgenda";
+    const actionType = e.target.getAttribute("data-action-type");
     switch (actionType) {
-      case 'activar':
+      case "activar":
         break;
-      case 'eliminar':
+      case "eliminar":
         swal
-            .fire({
-              title: 'Está seguro que desea eliminar el registro?',
-              text: 'Esta acción no se podrá revertir!',
-              icon: 'warning',
-              showCancelButton: true,
-              customClass: {
-                confirmButton: 'btn btn-success',
-                cancelButton: 'btn btn-danger',
-              },
-              confirmButtonText: 'Eliminar',
-              buttonsStyling: false,
-            })
-            .then((result) => {
-              if (result.value) {
-                this.service.eliminarRecurso(data[id]).subscribe((res) => {
-                  swal
-                      .fire({
-                        title: 'Éxito!',
-                        text: 'El registro fue eliminado correctamente.',
-                        icon: 'success',
-                        customClass: {
-                          confirmButton: 'btn btn-success',
-                        },
-                        buttonsStyling: false,
-                      })
-                      .then(() => {
-                        this.limpiar();
-                      });
-                });
-              }
-            });
+          .fire({
+            title: "Está seguro que desea eliminar el registro?",
+            text: "Esta acción no se podrá revertir!",
+            icon: "warning",
+            showCancelButton: true,
+            customClass: {
+              confirmButton: "btn btn-success",
+              cancelButton: "btn btn-danger",
+            },
+            confirmButtonText: "Eliminar",
+            buttonsStyling: false,
+          })
+          .then((result) => {
+            if (result.value) {
+              this.service.eliminarRecurso(data[id]).subscribe((res) => {
+                swal
+                  .fire({
+                    title: "Éxito!",
+                    text: "El registro fue eliminado correctamente.",
+                    icon: "success",
+                    customClass: {
+                      confirmButton: "btn btn-success",
+                    },
+                    buttonsStyling: false,
+                  })
+                  .then(() => {
+                    this.limpiar();
+                  });
+              });
+            }
+          });
         break;
-      case 'editar':
+      case "editar":
         const dialogRef = this.dialog.open(PersonaHorarioAgendaComponent, {
-          width: '',
+          width: "",
           data: {
-            title: 'Modificar Categoria',
-            label: 'Se modifica categoria: ' + data[id],
+            title: "Modificar Categoria",
+            label: "Se modifica categoria: " + data[id],
             entity: data,
           },
         });
@@ -261,18 +264,18 @@ export class PersonaHorarioAgendaComponent implements OnInit {
             this.service.modificarRecurso(result, data[id]).subscribe((res) => {
               console.log(res);
               swal
-                  .fire({
-                    title: 'Éxito!',
-                    text: 'El registro fue creado correctamente.',
-                    icon: 'success',
-                    customClass: {
-                      confirmButton: 'btn btn-success',
-                    },
-                    buttonsStyling: false,
-                  })
-                  .then(() => {
-                    this.limpiar();
-                  });
+                .fire({
+                  title: "Éxito!",
+                  text: "El registro fue creado correctamente.",
+                  icon: "success",
+                  customClass: {
+                    confirmButton: "btn btn-success",
+                  },
+                  buttonsStyling: false,
+                })
+                .then(() => {
+                  this.limpiar();
+                });
             });
           }
         });
@@ -283,14 +286,19 @@ export class PersonaHorarioAgendaComponent implements OnInit {
   }
   mostrarCampo(row, columna) {
     if (columna.relacion) {
-      if (row[columna.label] == null) { return ''; }
+      if (row[columna.label] == null) {
+        return "";
+      }
       return row[columna.label][columna.columnaRelacion];
     } else {
-      if (typeof columna.estados != 'undefined') {
+      if (typeof columna.estados != "undefined") {
         const label = row[columna.label]
-            ? columna.estados[0]
-            : columna.estados[1];
+          ? columna.estados[0]
+          : columna.estados[1];
         return label;
+      }
+      if (columna.label == "dia") {
+        return obtenerDia(row[columna.label]);
       }
       return row[columna.label];
     }
@@ -305,11 +313,10 @@ export class PersonaHorarioAgendaComponent implements OnInit {
 
     if (this.paginator.pageIndex > 0) {
       return (
-          cantidad *
-          (0 == this.paginator.pageIndex ? 1 : this.paginator.pageIndex)
+        cantidad *
+        (0 == this.paginator.pageIndex ? 1 : this.paginator.pageIndex)
       );
     }
     return inicio;
   }
-
 }
