@@ -42,6 +42,8 @@ export class ReservasService {
     /* return this.http.get(this.obtenerReservaURL + id + "/agenda/", {
       params: filtros,
     }); */
+    console.table([id, filtros]);
+
     const url = "http://localhost:4200/assets/data.json";
     return this.http.get(url);
   }

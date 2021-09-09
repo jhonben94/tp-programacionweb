@@ -168,6 +168,7 @@ export class CrearReservaComponent implements OnInit {
     const id = data.idEmpleado;
     delete data.idEmpleado;
     delete data.nombreEmpleado;
+    data.disponible = !data.disponible ? "S" : "N";
     this.selectedRow = null;
     this.reserva.listarReserva(id, data).subscribe((res: any) => {
       this.data = res;
