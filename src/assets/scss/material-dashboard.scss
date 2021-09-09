@@ -96,3 +96,8 @@ th.mat-header-cell {
 .selected {
   background-color: #d9d9d9;
 }
+::ng-deep .mat-tooltip {
+  /* your own custom styles here */
+  /* e.g. */
+  color: black;
+}
