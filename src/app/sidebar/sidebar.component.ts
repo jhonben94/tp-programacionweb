@@ -42,6 +42,13 @@ export const ROUTES: RouteInfo[] = [
   },
 
   {
+    path: "/reserva",
+    title: "Reservas",
+    type: "link",
+    icontype: "event_seat",
+  },
+
+  {
     path: "/presentacion-producto",
     title: "Presentación Producto",
     type: "link",
