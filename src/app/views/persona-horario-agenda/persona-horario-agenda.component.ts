@@ -15,6 +15,7 @@ import { PersonaHorarioAgendaService } from "src/app/services";
 import { MatDialog } from "@angular/material/dialog";
 
 import swal from "sweetalert2";
+import {PersonaHorarioAgendaEditComponent} from './persona-horario-agenda-edit/persona-horario-agenda-edit.component';
 
 @Component({
   selector: "app-persona-horario-agenda",
@@ -174,7 +175,7 @@ export class PersonaHorarioAgendaComponent implements OnInit {
   }
 
   openDialog(): void {
-    const dialogRef = this.dialog.open(PersonaHorarioAgendaComponent, {
+    const dialogRef = this.dialog.open(PersonaHorarioAgendaEditComponent, {
       width: "",
       data: {
         title: "Agregar Categoria",
@@ -250,7 +251,7 @@ export class PersonaHorarioAgendaComponent implements OnInit {
           });
         break;
       case "editar":
-        const dialogRef = this.dialog.open(PersonaHorarioAgendaComponent, {
+        const dialogRef = this.dialog.open(PersonaHorarioAgendaEditComponent, {
           width: "",
           data: {
             title: "Modificar Categoria",

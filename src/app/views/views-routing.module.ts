@@ -6,6 +6,7 @@ import { PersonaComponent } from "./persona/persona.component";
 import { PresentacionProductoComponent } from "./presentacion-producto/presentacion-producto.component";
 import { TipoProductoComponent } from "./tipo-producto/tipo-producto.component";
 import {PersonaHorarioAgendaComponent} from './persona-horario-agenda/persona-horario-agenda.component';
+import {HorarioExcepcionComponent} from './horario-excepcion/horario-excepcion.component';
 
 export const routes: Routes = [
   {
@@ -26,6 +27,10 @@ export const routes: Routes = [
       {
         path: "persona-horario-agenda",
         component: PersonaHorarioAgendaComponent,
+      },
+      {
+        path: "horario-excepcion",
+        component: HorarioExcepcionComponent,
       },
       {
         path: "persona",

@@ -54,6 +54,12 @@ export const ROUTES: RouteInfo[] = [
     icontype: "inventory_2",
   },
   {
+    path: "/horario-excepcion",
+    title: "Horarios de Excepcion",
+    type: "link",
+    icontype: "event_available",
+  },
+  {
     path: "/dashboard",
     title: "Dashboard",
     type: "link",
