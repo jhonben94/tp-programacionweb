@@ -40,6 +40,12 @@ export const ROUTES: RouteInfo[] = [
     type: "link",
     icontype: "person",
   },
+  {
+    path: "/ficha",
+    title: "Fichas",
+    type: "link",
+    icontype: "article",
+  },
 
   {
     path: "/presentacion-producto",
