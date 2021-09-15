@@ -55,8 +55,8 @@ export class FichaComponent implements OnInit {
    * @type {Array}
    * @description Definicion de las columnas a ser visualizadas
    */
-  displayedColumns: string[] = ["idFichaClinica","motivoConsulta", "diagnostico", "observacion", "idEmpleado",
-    "idCliente", "idTipoProducto","accion"];
+  displayedColumns: string[] = ["idFichaClinica", "motivoConsulta", "diagnostico", "observacion", "idEmpleado",
+    "idCliente", "idTipoProducto", "accion"];
 
   opcionPagina = CANTIDAD_PAG_LIST;
   /**
@@ -88,16 +88,22 @@ export class FichaComponent implements OnInit {
       matDef: "idEmpleado",
       label: "idEmpleado",
       descripcion: "EMPLEADO",
+      relacion: true,
+      columnaRelacion: ["nombre"],
     },
     {
       matDef: "idCliente",
       label: "idCliente",
       descripcion: "CLIENTE",
+      relacion: true,
+      columnaRelacion: ["nombre"],
     },
     {
       matDef: "idTipoProducto",
       label: "idTipoProducto",
       descripcion: "TIPO PRODUCTO",
+      relacion: true,
+      columnaRelacion: ["descripcion"],
     },
   ];
   /**
