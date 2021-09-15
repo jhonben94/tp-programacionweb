@@ -10,10 +10,15 @@ import { routes } from "./views-routing.module";
 import { CategoriaEditComponent } from "./categoria/categoria-edit/categoria-edit.component";
 import { TipoProductoComponent } from "./tipo-producto/tipo-producto.component";
 import { TipoProductoEditComponent } from "./tipo-producto/tipo-producto-edit/tipo-producto-edit.component";
-import { PresentacionProductoComponent } from './presentacion-producto/presentacion-producto.component';
-import { PresentacionProductoEditComponent } from './presentacion-producto/presentacion-producto-edit/presentacion-producto-edit.component';
-import { PersonaComponent } from './persona/persona.component';
-import { PersonaEditComponent } from './persona/persona-edit/persona-edit.component';
+
+import { PresentacionProductoComponent } from "./presentacion-producto/presentacion-producto.component";
+import { PresentacionProductoEditComponent } from "./presentacion-producto/presentacion-producto-edit/presentacion-producto-edit.component";
+import { PersonaComponent } from "./persona/persona.component";
+import { PersonaEditComponent } from "./persona/persona-edit/persona-edit.component";
+import { ReservasComponent } from "./reservas/reservas.component";
+import { BuscadorEmpleadoComponent } from "./buscadores/buscador-empleado/buscador-empleado.component";
+import { BuscadorClienteComponent } from "./buscadores/buscador-cliente/buscador-cliente.component";
+import { CrearReservaComponent } from "./reservas/crear-reserva/crear-reserva.component";
 import { FichaComponent } from './ficha/ficha.component';
 import { FichaEditComponent } from './ficha/ficha-edit/ficha-edit.component';
 
@@ -29,6 +34,10 @@ import { FichaEditComponent } from './ficha/ficha-edit/ficha-edit.component';
     PersonaEditComponent,
     FichaComponent,
     FichaEditComponent,
+    ReservasComponent,
+    BuscadorClienteComponent,
+    BuscadorEmpleadoComponent,
+    CrearReservaComponent,
   ],
   imports: [
     CommonModule,
@@ -39,6 +48,10 @@ import { FichaEditComponent } from './ficha/ficha-edit/ficha-edit.component';
     FormsModule,
     ReactiveFormsModule,
   ],
-  entryComponents: [CategoriaEditComponent],
+  entryComponents: [
+    CategoriaEditComponent,
+    BuscadorEmpleadoComponent,
+    BuscadorClienteComponent,
+  ],
 })
-export class ViewsModule {}
+export class ViewsModule { }
