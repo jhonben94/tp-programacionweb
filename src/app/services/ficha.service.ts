@@ -6,7 +6,7 @@ import { environment } from "src/environments/environment";
   providedIn: 'root'
 })
 export class FichaService {
-  recurosBaseURL: string = environment.URL_BASE + "/categoria/";
+  recurosBaseURL: string = environment.URL_BASE + "/fichaClinica/";
   headers = new HttpHeaders({ "Content-Type": "application/json" });
 
   constructor(private http: HttpClient) {}

@@ -9,7 +9,7 @@ import {
   deleteEmptyData,
 } from "../../utlis";
 import { startWith, switchMap, catchError, map } from "rxjs/operators";
-import { CategoriaService } from "src/app/services";
+import { CategoriaService, FichaService } from "src/app/services";
 import { MatDialog } from "@angular/material/dialog";
 import swal from "sweetalert2";
 import { FichaEditComponent } from "./ficha-edit/ficha-edit.component";
@@ -55,7 +55,8 @@ export class FichaComponent implements OnInit {
    * @type {Array}
    * @description Definicion de las columnas a ser visualizadas
    */
-  displayedColumns: string[] = ["idCategoria", "descripcion", "accion"];
+  displayedColumns: string[] = ["idFichaClinica","motivoConsulta", "diagnostico", "observacion", "idEmpleado",
+    "idCliente", "idTipoProducto","accion"];
 
   opcionPagina = CANTIDAD_PAG_LIST;
   /**
@@ -64,14 +65,39 @@ export class FichaComponent implements OnInit {
    */
   listaColumnas: any = [
     {
-      matDef: "idCategoria",
-      label: "idCategoria",
-      descripcion: "CATEGORÍA",
+      matDef: "idFichaClinica",
+      label: "idFichaClinica",
+      descripcion: "ID FICHA",
     },
     {
-      matDef: "descripcion",
-      label: "descripcion",
-      descripcion: "DESCRICIÓN",
+      matDef: "motivoConsulta",
+      label: "motivoConsulta",
+      descripcion: "MOTIVO DE CONSULTA",
+    },
+    {
+      matDef: "diagnostico",
+      label: "diagnostico",
+      descripcion: "DIAGNOSTICO",
+    },
+    {
+      matDef: "observacion",
+      label: "observacion",
+      descripcion: "OBSERVACIÓN",
+    },
+    {
+      matDef: "idEmpleado",
+      label: "idEmpleado",
+      descripcion: "EMPLEADO",
+    },
+    {
+      matDef: "idCliente",
+      label: "idCliente",
+      descripcion: "CLIENTE",
+    },
+    {
+      matDef: "idTipoProducto",
+      label: "idTipoProducto",
+      descripcion: "TIPO PRODUCTO",
     },
   ];
   /**
@@ -84,7 +110,7 @@ export class FichaComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private service: CategoriaService,
+    private service: FichaService,
     public dialog: MatDialog
   ) {
     this.filtrosForm = this.fb.group({
@@ -176,7 +202,7 @@ export class FichaComponent implements OnInit {
   }
 
   acciones(data, e) {
-    const id = "idCategoria";
+    const id = "idFichaClinica";
     const actionType = e.target.getAttribute("data-action-type");
     switch (actionType) {
       case "activar":
