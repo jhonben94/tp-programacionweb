@@ -55,7 +55,7 @@ export class FichaComponent implements OnInit {
    * @type {Array}
    * @description Definicion de las columnas a ser visualizadas
    */
-  displayedColumns: string[] = ["idFichaClinica", "motivoConsulta", "diagnostico", "observacion", "idEmpleado",
+  displayedColumns: string[] = ["idFichaClinica", "motivoConsulta", "diagnostico", "observacion", "fechaHoraCadenaFormateada", "idEmpleado",
     "idCliente", "idTipoProducto", "accion"];
 
   opcionPagina = CANTIDAD_PAG_LIST;
@@ -83,6 +83,11 @@ export class FichaComponent implements OnInit {
       matDef: "observacion",
       label: "observacion",
       descripcion: "OBSERVACIÓN",
+    },
+    {
+      matDef: "fechaHoraCadenaFormateada",
+      label: "fechaHoraCadenaFormateada",
+      descripcion: "FECHA",
     },
     {
       matDef: "idEmpleado",
@@ -120,7 +125,10 @@ export class FichaComponent implements OnInit {
     public dialog: MatDialog
   ) {
     this.filtrosForm = this.fb.group({
-      descripcion: [""],
+      motivoConsulta: [""],
+      diagnostico: [""],
+      observacion: [""],
+      idCliente: [""],
     });
   }
 
