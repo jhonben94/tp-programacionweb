@@ -1,25 +1,29 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, Inject, OnInit, ViewChild } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { merge, of } from "rxjs";
 import {
-  CANTIDAD_PAG_DEFAULT,
-  CANTIDAD_PAG_LIST,
+  CANTIDAD_PAG_MODAL_DEFAULT,
+  CANTIDAD_PAG_MODAL_LIST,
   deleteEmptyData,
-} from "../../utlis";
+} from "../../../utlis";
 import { startWith, switchMap, catchError, map } from "rxjs/operators";
-import { CategoriaService, PersonaService } from "src/app/services";
-import { MatDialog } from "@angular/material/dialog";
+import { PersonaService } from "src/app/services";
+import {
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+} from "@angular/material/dialog";
 import swal from "sweetalert2";
-import { PersonaEditComponent } from "./persona-edit/persona-edit.component";
 import { Router } from "@angular/router";
+import { DialogModel } from "src/app/models";
 @Component({
-  selector: "app-persona",
-  templateUrl: "./persona.component.html",
-  styleUrls: ["./persona.component.css"],
+  selector: "app-buscador-empleado",
+  templateUrl: "./buscador-empleado.component.html",
+  styleUrls: ["./buscador-empleado.component.css"],
 })
-export class PersonaComponent implements OnInit {
+export class BuscadorEmpleadoComponent implements OnInit {
   selectedRow: any;
 
   /**
@@ -67,10 +71,9 @@ export class PersonaComponent implements OnInit {
     "cedula",
     "tipoPersona",
     "fechaNacimiento",
-    "accion",
   ];
 
-  opcionPagina = CANTIDAD_PAG_LIST;
+  opcionPagina = CANTIDAD_PAG_MODAL_LIST;
   /**
    * @type {Array}
    * @description Definicion dinamica de las columnas a ser visualizadas
@@ -141,7 +144,9 @@ export class PersonaComponent implements OnInit {
     private fb: FormBuilder,
     private service: PersonaService,
     public dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    public dialogRef: MatDialogRef<BuscadorEmpleadoComponent>,
+    @Inject(MAT_DIALOG_DATA) public dataModal: any
   ) {
     this.filtrosForm = this.fb.group({
       descripcion: [""],
@@ -157,7 +162,7 @@ export class PersonaComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.paginator.pageSize = CANTIDAD_PAG_DEFAULT;
+    this.paginator.pageSize = CANTIDAD_PAG_MODAL_DEFAULT;
   }
 
   ngAfterViewInit() {
@@ -175,6 +180,8 @@ export class PersonaComponent implements OnInit {
       .pipe(
         startWith({}),
         switchMap(() => {
+          let filterData = this.filtrosForm.value;
+          filterData.soloUsuariosDelSistema = true;
           this.isLoadingResults = true;
           const params = {
             cantidad: this.paginator.pageSize,
@@ -182,7 +189,7 @@ export class PersonaComponent implements OnInit {
             orderBy: this.sort.active,
             orderDir: this.sort.direction,
             like: "S",
-            ejemplo: JSON.stringify(deleteEmptyData(this.filtrosForm.value)),
+            ejemplo: JSON.stringify(deleteEmptyData(filterData)),
           };
           return this.service.listarRecurso(params);
         }),

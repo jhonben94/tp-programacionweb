@@ -9,19 +9,21 @@ import {
   deleteEmptyData,
 } from "../../utlis";
 import { startWith, switchMap, catchError, map } from "rxjs/operators";
-import { CategoriaService, PersonaService } from "src/app/services";
+import { CategoriaService, TipoProductoService } from "src/app/services";
 import { MatDialog } from "@angular/material/dialog";
 import swal from "sweetalert2";
-import { PersonaEditComponent } from "./persona-edit/persona-edit.component";
+import { ReservasService } from "src/app/services/reservas.service";
+import { BuscadorEmpleadoComponent } from "../buscadores/buscador-empleado/buscador-empleado.component";
+import { PersonaComponent } from "../persona/persona.component";
+import { BuscadorClienteComponent } from "../buscadores/buscador-cliente/buscador-cliente.component";
+import { CrearReservaComponent } from "./crear-reserva/crear-reserva.component";
 import { Router } from "@angular/router";
 @Component({
-  selector: "app-persona",
-  templateUrl: "./persona.component.html",
-  styleUrls: ["./persona.component.css"],
+  selector: "app-reservas",
+  templateUrl: "./reservas.component.html",
+  styleUrls: ["./reservas.component.css"],
 })
-export class PersonaComponent implements OnInit {
-  selectedRow: any;
-
+export class ReservasComponent implements OnInit {
   /**
    * @type {boolean}
    * @description Flag que maneja el Expansion Panel de filtros
@@ -58,15 +60,12 @@ export class PersonaComponent implements OnInit {
    * @description Definicion de las columnas a ser visualizadas
    */
   displayedColumns: string[] = [
-    "idPersona",
-    "nombre",
-    "apellido",
-    "email",
-    "telefono",
-    "ruc",
-    "cedula",
-    "tipoPersona",
-    "fechaNacimiento",
+    "idReserva",
+    "fecha",
+    "horaInicio",
+    "horaFin",
+    "idCliente",
+    "idEmpleado",
     "accion",
   ];
 
@@ -77,56 +76,38 @@ export class PersonaComponent implements OnInit {
    */
   listaColumnas: any = [
     {
-      matDef: "idPersona",
-      label: "idPersona",
-      descripcion: "PERSONA",
+      matDef: "idReserva",
+      label: "idReserva",
+      descripcion: "ID",
     },
     {
-      matDef: "nombre",
-      label: "nombre",
-      descripcion: "NOMBRE",
-    },
-
-    {
-      matDef: "apellido",
-      label: "apellido",
-      descripcion: "APELLIDO",
+      matDef: "fecha",
+      label: "fecha",
+      descripcion: "FECHA",
     },
     {
-      matDef: "telefono",
-      label: "telefono",
-      descripcion: "TELÉFONO",
-    },
-
-    {
-      matDef: "email",
-      label: "email",
-      descripcion: "CORREO",
+      matDef: "horaInicio",
+      label: "horaInicio",
+      descripcion: "HORA INICIO",
     },
     {
-      matDef: "telefono",
-      label: "telefono",
-      descripcion: "TELÉFONO",
+      matDef: "horaFin",
+      label: "horaFin",
+      descripcion: "HORA FIN",
     },
     {
-      matDef: "ruc",
-      label: "ruc",
-      descripcion: "RUC",
+      matDef: "idCliente",
+      label: "idCliente",
+      descripcion: "CLIENTE",
+      relacion: true,
+      columnaRelacion: ["nombre", "apellido"],
     },
     {
-      matDef: "cedula",
-      label: "cedula",
-      descripcion: "CÉDULA",
-    },
-    {
-      matDef: "tipoPersona",
-      label: "tipoPersona",
-      descripcion: "TIPO PERSONA",
-    },
-    {
-      matDef: "fechaNacimiento",
-      label: "fechaNacimiento",
-      descripcion: "FECHA NAC.",
+      matDef: "idEmpleado",
+      label: "idEmpleado",
+      relacion: true,
+      descripcion: "EMPLEADO",
+      columnaRelacion: ["nombre", "apellido"],
     },
   ];
   /**
@@ -134,25 +115,27 @@ export class PersonaComponent implements OnInit {
    * @description Lista que contiene los valores para la grilla
    */
   data: any[] = [];
+  /**
+   * @type {Array}
+   * @description Lista que contiene los de las categorias
+   */
+  categorias: any[] = [];
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   constructor(
     private fb: FormBuilder,
-    private service: PersonaService,
+    private service: ReservasService,
     public dialog: MatDialog,
     private router: Router
   ) {
     this.filtrosForm = this.fb.group({
-      descripcion: [""],
-      nombre: [""],
-      apellido: [""],
-      email: [""],
-      telefono: [""],
-      ruc: [""],
-      cedula: [""],
-      tipoPersona: [""],
-      fechaNacimiento: [""],
+      fechaDesde: [""],
+      fechaHasta: [""],
+      idEmpleado: [""],
+      idCliente: [""],
+      nombreEmpleado: [""],
+      nombreCliente: [""],
     });
   }
 
@@ -176,13 +159,18 @@ export class PersonaComponent implements OnInit {
         startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
+
+          let filterData = this.filtrosForm.value;
+          delete filterData.nombreEmpleado;
+          delete filterData.nombreCliente;
+
           const params = {
             cantidad: this.paginator.pageSize,
             inicio: this.retornaInicio(),
             orderBy: this.sort.active,
             orderDir: this.sort.direction,
-            like: "S",
-            ejemplo: JSON.stringify(deleteEmptyData(this.filtrosForm.value)),
+
+            ejemplo: JSON.stringify(deleteEmptyData(filterData)),
           };
           return this.service.listarRecurso(params);
         }),
@@ -203,52 +191,19 @@ export class PersonaComponent implements OnInit {
       .subscribe((data) => (this.data = data));
   }
 
-  agregar(): void {
-    this.router.navigate(["persona/agregar"]);
+  openDialog(): void {
+    this.router.navigate(["reserva/agregar"]);
   }
 
   acciones(data, e) {
-    const id = "idPersona";
+    const id = "idTipoProducto";
     const actionType = e.target.getAttribute("data-action-type");
     switch (actionType) {
-      case "activar":
+      case "cancelar":
         break;
-      case "eliminar":
-        swal
-          .fire({
-            title: "Está seguro que desea eliminar el registro?",
-            text: "Esta acción no se podrá revertir!",
-            icon: "warning",
-            showCancelButton: true,
-            customClass: {
-              confirmButton: "btn btn-success",
-              cancelButton: "btn btn-danger",
-            },
-            confirmButtonText: "Eliminar",
-            buttonsStyling: false,
-          })
-          .then((result) => {
-            if (result.value) {
-              this.service.eliminarRecurso(data[id]).subscribe((res) => {
-                swal
-                  .fire({
-                    title: "Éxito!",
-                    text: "El registro fue eliminado correctamente.",
-                    icon: "success",
-                    customClass: {
-                      confirmButton: "btn btn-success",
-                    },
-                    buttonsStyling: false,
-                  })
-                  .then(() => {
-                    this.limpiar();
-                  });
-              });
-            }
-          });
+      case "modificar":
         break;
-      case "editar":
-        this.router.navigate(["persona/modificar", data[id]]);
+      case "nuevaFicha":
         break;
       default:
         break;
@@ -257,6 +212,12 @@ export class PersonaComponent implements OnInit {
   mostrarCampo(row, columna) {
     if (columna.relacion) {
       if (row[columna.label] == null) return "";
+      if (Array.isArray(columna.columnaRelacion)) {
+        return this.multipleColumnas(
+          row[columna.label],
+          columna.columnaRelacion
+        );
+      }
       return row[columna.label][columna.columnaRelacion];
     } else {
       if (typeof columna.estados != "undefined") {
@@ -267,6 +228,14 @@ export class PersonaComponent implements OnInit {
       }
       return row[columna.label];
     }
+  }
+  multipleColumnas(valor: any, listaCol: any[]) {
+    let valorRetorno = "";
+    for (let index = 0; index < listaCol.length; index++) {
+      const property = listaCol[index];
+      valorRetorno += valor[property] + " ";
+    }
+    return valorRetorno;
   }
   limpiar() {
     this.filtrosForm.reset();
@@ -284,8 +253,51 @@ export class PersonaComponent implements OnInit {
     }
     return inicio;
   }
+  buscadores(buscador) {
+    let dialogRef = null;
+    switch (buscador) {
+      case "empleado":
+        dialogRef = this.dialog.open(BuscadorEmpleadoComponent, {
+          data: {
+            title: "Buscador de Empleados",
+          },
+        });
 
-  onRowClicked(row) {
-    this.selectedRow = row;
+        dialogRef.afterClosed().subscribe((result: any) => {
+          console.log(result);
+          if (result) {
+            this.f.nombreEmpleado.setValue(
+              result.nombre + " " + result.apellido
+            );
+            this.f.idEmpleado.setValue(result.idPersona);
+          } else {
+            this.f.nombreEmpleado.setValue(null);
+          }
+        });
+        break;
+
+      case "cliente":
+        dialogRef = this.dialog.open(BuscadorClienteComponent, {
+          data: {
+            title: "Buscador de Clientes",
+          },
+        });
+
+        dialogRef.afterClosed().subscribe((result: any) => {
+          console.log(result);
+          if (result) {
+            this.f.nombreCliente.setValue(
+              result.nombre + " " + result.apellido
+            );
+            this.f.idCliente.setValue(result.idPersona);
+          } else {
+            this.f.nombreEmpleado.setValue(null);
+          }
+        });
+        break;
+
+      default:
+        break;
+    }
   }
 }

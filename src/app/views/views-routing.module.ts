@@ -4,6 +4,8 @@ import { CategoriaComponent } from "./categoria/categoria.component";
 import { PersonaEditComponent } from "./persona/persona-edit/persona-edit.component";
 import { PersonaComponent } from "./persona/persona.component";
 import { PresentacionProductoComponent } from "./presentacion-producto/presentacion-producto.component";
+import { CrearReservaComponent } from "./reservas/crear-reserva/crear-reserva.component";
+import { ReservasComponent } from "./reservas/reservas.component";
 import { TipoProductoComponent } from "./tipo-producto/tipo-producto.component";
 import {PersonaHorarioAgendaComponent} from './persona-horario-agenda/persona-horario-agenda.component';
 import {HorarioExcepcionComponent} from './horario-excepcion/horario-excepcion.component';
@@ -43,6 +45,14 @@ export const routes: Routes = [
       {
         path: "persona/modificar/:id",
         component: PersonaEditComponent,
+      },
+      {
+        path: "reserva",
+        component: ReservasComponent,
+      },
+      {
+        path: "reserva/agregar",
+        component: CrearReservaComponent,
       },
     ],
   },

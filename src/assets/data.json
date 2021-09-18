@@ -1,9 +1,16 @@
-{
-  "lista": [
-    {
-      "idCategoria": 1,
-      "descripcion": "categoria 1"
+[
+  {
+    "horaInicioCadena": "1000",
+    "horaFinCadena": "1015",
+    "idCliente": {
+      "idPersona": 3,
+      "nombre": "Jhony",
+      "apellido": "Benitez"
     }
-  ],
-  "total": 1
-}
+  },
+  {
+    "horaInicioCadena": "1015",
+    "horaFinCadena": "1030",
+    "idCliente": null
+  }
+]

@@ -53,3 +53,15 @@ export const WEEKDAYS = [
 export const obtenerDia = (id) => {
   return WEEKDAYS.find((item) => (item.codigo = id)).valor;
 };
+
+export const CANTIDAD_PAG_MODAL_DEFAULT = 5;
+export const CANTIDAD_PAG_MODAL_LIST = [5];
+export const formatearHora = (hora) => {
+  const string_copy = (" " + hora).slice(1);
+  const string_copy2 = (" " + hora).slice(1);
+  let h = string_copy.substring(0, 2);
+  let m = string_copy2.substring(2, 4);
+  h = checkZero(h);
+  m = checkZero(m);
+  return h + ":" + m;
+};
