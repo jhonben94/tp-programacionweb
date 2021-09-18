@@ -7,6 +7,8 @@ import { PresentacionProductoComponent } from "./presentacion-producto/presentac
 import { CrearReservaComponent } from "./reservas/crear-reserva/crear-reserva.component";
 import { ReservasComponent } from "./reservas/reservas.component";
 import { TipoProductoComponent } from "./tipo-producto/tipo-producto.component";
+import {PersonaHorarioAgendaComponent} from './persona-horario-agenda/persona-horario-agenda.component';
+import {HorarioExcepcionComponent} from './horario-excepcion/horario-excepcion.component';
 
 export const routes: Routes = [
   {
@@ -23,6 +25,14 @@ export const routes: Routes = [
       {
         path: "presentacion-producto",
         component: PresentacionProductoComponent,
+      },
+      {
+        path: "persona-horario-agenda",
+        component: PersonaHorarioAgendaComponent,
+      },
+      {
+        path: "horario-excepcion",
+        component: HorarioExcepcionComponent,
       },
       {
         path: "persona",

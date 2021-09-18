@@ -35,6 +35,12 @@ export const ROUTES: RouteInfo[] = [
     icontype: "content_paste",
   },
   {
+    path: "/persona-horario-agenda",
+    title: "Persona Horario Agenda",
+    type: "link",
+    icontype: "calendar_today",
+  },
+  {
     path: "/persona",
     title: "Personas",
     type: "link",
@@ -53,6 +59,12 @@ export const ROUTES: RouteInfo[] = [
     title: "Presentación Producto",
     type: "link",
     icontype: "inventory_2",
+  },
+  {
+    path: "/horario-excepcion",
+    title: "Horarios de Excepcion",
+    type: "link",
+    icontype: "event_available",
   },
   {
     path: "/dashboard",

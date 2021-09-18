@@ -18,6 +18,10 @@ import { ReservasComponent } from "./reservas/reservas.component";
 import { BuscadorEmpleadoComponent } from "./buscadores/buscador-empleado/buscador-empleado.component";
 import { BuscadorClienteComponent } from "./buscadores/buscador-cliente/buscador-cliente.component";
 import { CrearReservaComponent } from "./reservas/crear-reserva/crear-reserva.component";
+import { PersonaHorarioAgendaComponent } from './persona-horario-agenda/persona-horario-agenda.component';
+import { PersonaHorarioAgendaEditComponent } from './persona-horario-agenda/persona-horario-agenda-edit/persona-horario-agenda-edit.component';
+import { HorarioExcepcionComponent } from './horario-excepcion/horario-excepcion.component';
+import { HorarioExcepcionEditComponent } from './horario-excepcion/horario-excepcion-edit/horario-excepcion-edit.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +37,10 @@ import { CrearReservaComponent } from "./reservas/crear-reserva/crear-reserva.co
     BuscadorClienteComponent,
     BuscadorEmpleadoComponent,
     CrearReservaComponent,
+    PersonaHorarioAgendaComponent,
+    PersonaHorarioAgendaEditComponent,
+    HorarioExcepcionComponent,
+    HorarioExcepcionEditComponent,
   ],
   imports: [
     CommonModule,
