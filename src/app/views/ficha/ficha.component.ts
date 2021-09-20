@@ -13,6 +13,10 @@ import { CategoriaService, FichaService } from "src/app/services";
 import { MatDialog } from "@angular/material/dialog";
 import swal from "sweetalert2";
 import { FichaEditComponent } from "./ficha-edit/ficha-edit.component";
+import { BuscadorEmpleadoComponent } from "../buscadores/buscador-empleado/buscador-empleado.component";
+import { BuscadorClienteComponent } from "../buscadores/buscador-cliente/buscador-cliente.component";
+import { Router } from "@angular/router";
+import { BuscadorTipoProductoComponent } from "../buscadores/buscador-tipo-producto/buscador-tipo-producto/buscador-tipo-producto.component";
 
 @Component({
   selector: 'app-ficha',
@@ -55,8 +59,16 @@ export class FichaComponent implements OnInit {
    * @type {Array}
    * @description Definicion de las columnas a ser visualizadas
    */
-  displayedColumns: string[] = ["idFichaClinica", "motivoConsulta", "diagnostico", "observacion", "fechaHoraCadenaFormateada", "idEmpleado",
-    "idCliente", "idTipoProducto", "accion"];
+  displayedColumns: string[] = [
+    "idFichaClinica",
+    "motivoConsulta",
+    "diagnostico",
+    "observacion",
+    "fechaHoraCadenaFormateada",
+    "idEmpleado",
+    "idCliente",
+    "idTipoProducto",
+    "accion"];
 
   opcionPagina = CANTIDAD_PAG_LIST;
   /**
@@ -90,17 +102,17 @@ export class FichaComponent implements OnInit {
       descripcion: "FECHA",
     },
     {
-      matDef: "idEmpleado",
-      label: "idEmpleado",
-      descripcion: "EMPLEADO",
-      relacion: true,
-      columnaRelacion: ["nombre"],
-    },
-    {
       matDef: "idCliente",
       label: "idCliente",
       descripcion: "CLIENTE",
       relacion: true,
+      columnaRelacion: ["nombre"],
+    },
+    {
+      matDef: "idEmpleado",
+      label: "idEmpleado",
+      relacion: true,
+      descripcion: "EMPLEADO",
       columnaRelacion: ["nombre"],
     },
     {
@@ -122,13 +134,20 @@ export class FichaComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private service: FichaService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private router: Router
   ) {
     this.filtrosForm = this.fb.group({
       motivoConsulta: [""],
       diagnostico: [""],
       observacion: [""],
+      idEmpleado: [""],
       idCliente: [""],
+      nombreEmpleado: [""],
+      nombreCliente: [""],
+      fechaDesde: [""],
+      fechaHasta: [""],
+      idTipoProducto: [""],
     });
   }
 
@@ -152,13 +171,18 @@ export class FichaComponent implements OnInit {
         startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
+
+          let filterData = this.filtrosForm.value;
+          delete filterData.nombreEmpleado;
+          delete filterData.nombreCliente;
+
           const params = {
             cantidad: this.paginator.pageSize,
             inicio: this.retornaInicio(),
             orderBy: this.sort.active,
             orderDir: this.sort.direction,
-            like: "S",
-            ejemplo: JSON.stringify(deleteEmptyData(this.filtrosForm.value)),
+
+            ejemplo: JSON.stringify(deleteEmptyData(filterData)),
           };
           return this.service.listarRecurso(params);
         }),
@@ -319,6 +343,71 @@ export class FichaComponent implements OnInit {
       );
     }
     return inicio;
+  }
+  buscadores(buscador) {
+    let dialogRef = null;
+    switch (buscador) {
+      case "empleado":
+        dialogRef = this.dialog.open(BuscadorEmpleadoComponent, {
+          data: {
+            title: "Buscador de Empleados",
+          },
+        });
+
+        dialogRef.afterClosed().subscribe((result: any) => {
+          console.log(result);
+          if (result) {
+            this.f.nombreEmpleado.setValue(
+              result.nombre + " " + result.apellido
+            );
+            this.f.idEmpleado.setValue(result.idPersona);
+          } else {
+            this.f.nombreEmpleado.setValue(null);
+          }
+        });
+        break;
+
+      case "cliente":
+        dialogRef = this.dialog.open(BuscadorClienteComponent, {
+          data: {
+            title: "Buscador de Clientes",
+          },
+        });
+
+        dialogRef.afterClosed().subscribe((result: any) => {
+          console.log(result);
+          if (result) {
+            this.f.nombreCliente.setValue(
+              result.nombre + " " + result.apellido
+            );
+            this.f.idCliente.setValue(result.idPersona);
+          } else {
+            this.f.nombreEmpleado.setValue(null);
+          }
+        });
+        break;
+
+      case "idTipoProducto":
+        dialogRef = this.dialog.open(BuscadorTipoProductoComponent, {
+          data: {
+            title: "Buscador de Tipo Productos",
+          },
+        });
+
+        dialogRef.afterClosed().subscribe((result: any) => {
+          console.log(result);
+          if (result) {
+            this.f.descripcion.setValue(
+              result.descripcion
+            );
+            this.f.idTipoProducto.setValue(result.idTipoProducto);
+          }
+        });
+        break;
+
+      default:
+        break;
+    }
   }
 
 }

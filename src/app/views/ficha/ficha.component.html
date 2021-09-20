@@ -15,7 +15,6 @@
               <strong>Filtros de Búsqueda</strong>
             </mat-panel-title>
           </mat-expansion-panel-header>
-
           <form [formGroup]="filtrosForm" (keydown.enter)="$event.preventDefault()">
             <div class="card-body">
               <div class="row">
@@ -26,13 +25,44 @@
                   <mat-form-field class="example-full-width">
                     <input type="text" matInput placeholder="DIAGNOSTICO" formControlName="diagnostico" />
                   </mat-form-field>
+                  <mat-form-field>
+                    <input matInput [matDatepicker]="picker" placeholder="FECHA DESDE" formControlName="fechaDesde"
+                      (click)="picker.open()" />
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <input matInput [matDatepicker]="picker2" placeholder="FECHA HASTA" formControlName="fechaHasta"
+                      (click)="picker2.open()" />
+                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                  </mat-form-field>
                 </div>
                 <div class="col-6">
                   <mat-form-field class="example-full-width">
                     <input type="text" matInput placeholder="OBSERVACION" formControlName="observacion" />
                   </mat-form-field>
                   <mat-form-field class="example-full-width">
-                    <input type="text" matInput placeholder="CLIENTE" formControlName="idCliente" />
+                    <input type="search" matInput placeholder="EMPLEADO" formControlName="nombreEmpleado"
+                      (click)="buscadores('empleado')" />
+                    <button mat-button matSuffix mat-stroked-button aria-label="search"
+                      (click)="buscadores('empleado')">
+                      <mat-icon>search</mat-icon>
+                    </button>
+                  </mat-form-field>
+                  <mat-form-field class="example-full-width">
+                    <input type="search" matInput placeholder="CLIENTE" formControlName="nombreCliente"
+                      (click)="buscadores('cliente')" />
+                    <button mat-button matSuffix mat-stroked-button aria-label="search" (click)="buscadores('cliente')">
+                      <mat-icon>search</mat-icon>
+                    </button>
+                  </mat-form-field>
+                  <mat-form-field class="example-full-width">
+                    <input type="search" matInput placeholder="TIPO PRODUCTO" formControlName="idTipoProducto"
+                      (click)="buscadores('idTipoProducto')" />
+                    <button mat-button matSuffix mat-stroked-button aria-label="search" (click)="buscadores('idTipoProducto')">
+                      <mat-icon>search</mat-icon>
+                    </button>
                   </mat-form-field>
                 </div>
               </div>

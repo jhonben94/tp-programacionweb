@@ -21,6 +21,7 @@ import { BuscadorClienteComponent } from "./buscadores/buscador-cliente/buscador
 import { CrearReservaComponent } from "./reservas/crear-reserva/crear-reserva.component";
 import { FichaComponent } from './ficha/ficha.component';
 import { FichaEditComponent } from './ficha/ficha-edit/ficha-edit.component';
+import { BuscadorTipoProductoComponent } from './buscadores/buscador-tipo-producto/buscador-tipo-producto/buscador-tipo-producto.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { FichaEditComponent } from './ficha/ficha-edit/ficha-edit.component';
     BuscadorClienteComponent,
     BuscadorEmpleadoComponent,
     CrearReservaComponent,
+    BuscadorTipoProductoComponent,
   ],
   imports: [
     CommonModule,
