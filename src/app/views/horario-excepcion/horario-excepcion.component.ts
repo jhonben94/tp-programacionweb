@@ -4,10 +4,10 @@ import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { merge, of } from "rxjs";
 import {
-  CANTIDAD_PAG_DEFAULT,
-  CANTIDAD_PAG_LIST,
-  deleteEmptyData,
-} from "../../utlis";
+    CANTIDAD_PAG_DEFAULT,
+    CANTIDAD_PAG_LIST,
+    deleteEmptyData, formatearFechaFiltros,
+} from '../../utlis';
 import { startWith, switchMap, catchError, map } from "rxjs/operators";
 import {CategoriaService, HorarioExcepcionService} from 'src/app/services';
 
@@ -15,6 +15,7 @@ import { MatDialog } from "@angular/material/dialog";
 import swal from "sweetalert2";
 import {HorarioExcepcionEditComponent} from './horario-excepcion-edit/horario-excepcion-edit.component';
 import {CategoriaEditComponent} from '../categoria/categoria-edit/categoria-edit.component';
+import {PersonaHorarioAgendaEditComponent} from '../persona-horario-agenda/persona-horario-agenda-edit/persona-horario-agenda-edit.component';
 
 @Component({
   selector: 'app-horario-excepcion',
@@ -153,6 +154,9 @@ opcionPagina = CANTIDAD_PAG_LIST;
         .pipe(
             startWith({}),
             switchMap(() => {
+                let filtros = this.filtrosForm.value
+                console.log(formatearFechaFiltros(filtros.fechaCadena))
+                // filtros.fechaCadena = formatearFechaFiltros(filtros.fechaCadena)
               this.isLoadingResults = true;
               const params = {
                 cantidad: this.paginator.pageSize,
@@ -160,7 +164,7 @@ opcionPagina = CANTIDAD_PAG_LIST;
                 orderBy: this.sort.active,
                 orderDir: this.sort.direction,
                 like: "S",
-                ejemplo: JSON.stringify(deleteEmptyData(this.filtrosForm.value)),
+                ejemplo: JSON.stringify(deleteEmptyData(filtros)),
               };
               return this.service.listarRecurso(params);
             }),
@@ -185,8 +189,8 @@ opcionPagina = CANTIDAD_PAG_LIST;
     const dialogRef = this.dialog.open(CategoriaEditComponent, {
       width: "",
       data: {
-        title: "Agregar Categoria",
-        label: "Se agrega categoria correspondiente.",
+        title: "Agregar Horario Exepcional",
+        label: "Se agrega el Horario Exepcional correspondiente.",
         entity: {},
       },
     });
@@ -258,11 +262,11 @@ opcionPagina = CANTIDAD_PAG_LIST;
             });
         break;
       case "editar":
-        const dialogRef = this.dialog.open(CategoriaEditComponent, {
+        const dialogRef = this.dialog.open(PersonaHorarioAgendaEditComponent, {
           width: "",
           data: {
-            title: "Modificar Categoria",
-            label: "Se modifica categoria: " + data[id],
+            title: "Modificar Horario",
+            label: "Se modifica Horario: " + data[id],
             entity: data,
           },
         });

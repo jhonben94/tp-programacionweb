@@ -16,6 +16,9 @@ import { MatDialog } from "@angular/material/dialog";
 
 import swal from "sweetalert2";
 import {PersonaHorarioAgendaEditComponent} from './persona-horario-agenda-edit/persona-horario-agenda-edit.component';
+import {Router} from '@angular/router';
+import {BuscadorEmpleadoComponent} from '../buscadores/buscador-empleado/buscador-empleado.component';
+import {BuscadorClienteComponent} from '../buscadores/buscador-cliente/buscador-cliente.component';
 
 @Component({
   selector: "app-persona-horario-agenda",
@@ -64,6 +67,7 @@ export class PersonaHorarioAgendaComponent implements OnInit {
     "horaApertura",
     "horaCierre",
     "intervaloMinutos",
+    "idEmpleado",
     "accion",
   ];
 
@@ -98,31 +102,33 @@ export class PersonaHorarioAgendaComponent implements OnInit {
       label: "intervaloMinutos",
       descripcion: "INTERVALO MINUTOS",
     },
+    {
+      matDef: "idEmpleado",
+      label: "idEmpleado",
+      relacion: true,
+      descripcion: "EMPLEADO",
+      columnaRelacion: ["nombre", "apellido"],
+    }
   ];
   /**
    * @type {Array}
    * @description Lista que contiene los valores para la grilla
    */
   data: any[] = [];
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatSort, {static: true}) sort: MatSort;
   listaSemana: { codigo: number; valor: string }[];
 
   constructor(
-    private fb: FormBuilder,
-    private service: PersonaHorarioAgendaService,
-    public dialog: MatDialog
+      private fb: FormBuilder,
+      private service: PersonaHorarioAgendaService,
+      public dialog: MatDialog,
+      private router: Router
   ) {
     this.filtrosForm = this.fb.group({
-      idPersonaHorarioAgenda: [""],
       dia: [""],
-      horaApertura: [""],
-      horaCierre: [""],
-      intervaloMinutos: [""],
-      ruc: [""],
-      cedula: [""],
-      tipoPersona: [""],
-      fechaNacimiento: [""],
+      idEmpleado: [""],
+      nombreEmpleado: [""]
     });
   }
 
@@ -143,73 +149,42 @@ export class PersonaHorarioAgendaComponent implements OnInit {
 
   buscar() {
     merge(this.sort.sortChange, this.paginator.page)
-      .pipe(
-        startWith({}),
-        switchMap(() => {
-          this.isLoadingResults = true;
-          const params = {
-            cantidad: this.paginator.pageSize,
-            inicio: this.retornaInicio(),
-            orderBy: this.sort.active,
-            orderDir: this.sort.direction,
-            like: "S",
-            ejemplo: JSON.stringify(deleteEmptyData(this.filtrosForm.value)),
-          };
-          return this.service.listarRecurso(params);
-        }),
-        map((data: any) => {
-          // Flip flag to show that loading has finished.
-          this.isLoadingResults = false;
-          this.isRateLimitReached = false;
-          this.resultsLength = data.totalDatos;
-          return data.lista;
-        }),
-        catchError(() => {
-          this.isLoadingResults = false;
-          // Catch if the API has reached its rate limit. Return empty data.
-          this.isRateLimitReached = true;
-          return of([]);
-        })
-      )
-      .subscribe((data) => (this.data = data));
-  }
-
-  openDialog(): void {
-    const dialogRef = this.dialog.open(PersonaHorarioAgendaEditComponent, {
-      width: "",
-      data: {
-        title: "Agregar Categoria",
-        label: "Se agrega categoria correspondiente.",
-        entity: {},
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result: any) => {
-      console.log(result);
-
-      if (result) {
-        result.flagVisible = "S";
-        this.service.agregarRecurso(result).subscribe((res) => {
-          console.log(res);
-
-          swal
-            .fire({
-              title: "Éxito!",
-              text: "El registro fue creado correctamente.",
-              icon: "success",
-              customClass: {
-                confirmButton: "btn btn-success",
-              },
-              buttonsStyling: false,
+        .pipe(
+            startWith({}),
+            switchMap(() => {
+              this.isLoadingResults = true;
+                let filterData = this.filtrosForm.value;
+                delete filterData.nombreEmpleado;
+              const params = {
+                cantidad: this.paginator.pageSize,
+                inicio: this.retornaInicio(),
+                orderBy: this.sort.active,
+                orderDir: this.sort.direction,
+                like: "S",
+                ejemplo: JSON.stringify(deleteEmptyData(this.filtrosForm.value)),
+              };
+              return this.service.listarRecurso(params);
+            }),
+            map((data: any) => {
+              // Flip flag to show that loading has finished.
+              this.isLoadingResults = false;
+              this.isRateLimitReached = false;
+              this.resultsLength = data.totalDatos;
+              return data.lista;
+            }),
+            catchError(() => {
+              this.isLoadingResults = false;
+              // Catch if the API has reached its rate limit. Return empty data.
+              this.isRateLimitReached = true;
+              return of([]);
             })
-            .then(() => {
-              this.limpiar();
-            });
-        });
-      }
-    });
+        )
+        .subscribe((data) => (this.data = data));
   }
 
+  agregar(): void {
+    this.router.navigate(["persona-horario-agenda/agregar"]);
+  }
   acciones(data, e) {
     const id = "idPersonaHorarioAgenda";
     const actionType = e.target.getAttribute("data-action-type");
@@ -218,73 +193,47 @@ export class PersonaHorarioAgendaComponent implements OnInit {
         break;
       case "eliminar":
         swal
-          .fire({
-            title: "Está seguro que desea eliminar el registro?",
-            text: "Esta acción no se podrá revertir!",
-            icon: "warning",
-            showCancelButton: true,
-            customClass: {
-              confirmButton: "btn btn-success",
-              cancelButton: "btn btn-danger",
-            },
-            confirmButtonText: "Eliminar",
-            buttonsStyling: false,
-          })
-          .then((result) => {
-            if (result.value) {
-              this.service.eliminarRecurso(data[id]).subscribe((res) => {
-                swal
-                  .fire({
-                    title: "Éxito!",
-                    text: "El registro fue eliminado correctamente.",
-                    icon: "success",
-                    customClass: {
-                      confirmButton: "btn btn-success",
-                    },
-                    buttonsStyling: false,
-                  })
-                  .then(() => {
-                    this.limpiar();
-                  });
-              });
-            }
-          });
+            .fire({
+              title: "Está seguro que desea eliminar el registro?",
+              text: "Esta acción no se podrá revertir!",
+              icon: "warning",
+              showCancelButton: true,
+              customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger",
+              },
+              confirmButtonText: "Eliminar",
+              buttonsStyling: false,
+            })
+            .then((result) => {
+              if (result.value) {
+                this.service.eliminarRecurso(data[id]).subscribe((res) => {
+                  swal
+                      .fire({
+                        title: "Éxito!",
+                        text: "El registro fue eliminado correctamente.",
+                        icon: "success",
+                        customClass: {
+                          confirmButton: "btn btn-success",
+                        },
+                        buttonsStyling: false,
+                      })
+                      .then(() => {
+                        this.limpiar();
+                      });
+                });
+              }
+            });
         break;
       case "editar":
-        const dialogRef = this.dialog.open(PersonaHorarioAgendaEditComponent, {
-          width: "",
-          data: {
-            title: "Modificar Categoria",
-            label: "Se modifica categoria: " + data[id],
-            entity: data,
-          },
-        });
-
-        dialogRef.afterClosed().subscribe((result) => {
-          if (result) {
-            this.service.modificarRecurso(result, data[id]).subscribe((res) => {
-              console.log(res);
-              swal
-                .fire({
-                  title: "Éxito!",
-                  text: "El registro fue creado correctamente.",
-                  icon: "success",
-                  customClass: {
-                    confirmButton: "btn btn-success",
-                  },
-                  buttonsStyling: false,
-                })
-                .then(() => {
-                  this.limpiar();
-                });
-            });
-          }
-        });
+        this.router.navigate(["persona-horario-agenda/modificar/", data[id]]);
         break;
       default:
         break;
     }
   }
+
+
   mostrarCampo(row, columna) {
     if (columna.relacion) {
       if (row[columna.label] == null) {
@@ -294,8 +243,8 @@ export class PersonaHorarioAgendaComponent implements OnInit {
     } else {
       if (typeof columna.estados != "undefined") {
         const label = row[columna.label]
-          ? columna.estados[0]
-          : columna.estados[1];
+            ? columna.estados[0]
+            : columna.estados[1];
         return label;
       }
       if (columna.label == "dia") {
@@ -304,20 +253,70 @@ export class PersonaHorarioAgendaComponent implements OnInit {
       return row[columna.label];
     }
   }
+
   limpiar() {
     this.filtrosForm.reset();
     this.buscar();
   }
+
   retornaInicio() {
     const cantidad = this.paginator.pageSize;
     const inicio: any = this.paginator.pageIndex;
 
     if (this.paginator.pageIndex > 0) {
       return (
-        cantidad *
-        (0 == this.paginator.pageIndex ? 1 : this.paginator.pageIndex)
+          cantidad *
+          (0 == this.paginator.pageIndex ? 1 : this.paginator.pageIndex)
       );
     }
     return inicio;
+  }
+
+  buscadores(buscador) {
+    let dialogRef = null;
+    switch (buscador) {
+      case "empleado":
+        dialogRef = this.dialog.open(BuscadorEmpleadoComponent, {
+          data: {
+            title: "Buscador de Empleados",
+          },
+        });
+
+        dialogRef.afterClosed().subscribe((result: any) => {
+          console.log(result);
+          if (result) {
+            this.f.nombreEmpleado.setValue(
+                result.nombre + " " + result.apellido
+            );
+            this.f.idEmpleado.setValue(result.idPersona);
+          } else {
+            this.f.nombreEmpleado.setValue(null);
+          }
+        });
+        break;
+
+      case "cliente":
+        dialogRef = this.dialog.open(BuscadorClienteComponent, {
+          data: {
+            title: "Buscador de Clientes",
+          },
+        });
+
+        dialogRef.afterClosed().subscribe((result: any) => {
+          console.log(result);
+          if (result) {
+            this.f.nombreCliente.setValue(
+                result.nombre + " " + result.apellido
+            );
+            this.f.idCliente.setValue(result.idPersona);
+          } else {
+            this.f.nombreEmpleado.setValue(null);
+          }
+        });
+        break;
+
+      default:
+        break;
+    }
   }
 }

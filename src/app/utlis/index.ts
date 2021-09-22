@@ -65,3 +65,22 @@ export const formatearHora = (hora) => {
   m = checkZero(m);
   return h + ":" + m;
 };
+
+export function formatearFechaFiltros(date) {
+  var day = date.getDate();
+  var month = date.getMonth() ;
+  var year = date.getFullYear() ;
+  var hour = date.getHours();
+  var minutes = date.getMinutes();
+  var seconds = date.getSeconds() ;
+
+  day = checkZero(day);
+  month = checkZero(month);
+  year = checkZero(year);
+  hour = checkZero(hour);
+  minutes = checkZero(minutes);
+  seconds = checkZero(seconds);
+  return (
+      year + month + day
+  );
+}
