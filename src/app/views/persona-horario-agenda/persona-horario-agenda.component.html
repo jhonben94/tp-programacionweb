@@ -20,45 +20,49 @@
             [formGroup]="filtrosForm"
             (keydown.enter)="$event.preventDefault()"
           >
-            <mat-form-field class="example-full-width">
-            <input
-                    type="search"
-                    matInput
-                    placeholder="EMPLEADO"
-                    formControlName="nombreEmpleado"
-                    (click)="buscadores('empleado')"
-            />
-            <button
-                    mat-button
-                    matSuffix
-                    mat-stroked-button
-                    aria-label="search"
-                    (click)="buscadores('empleado')"
-            >
-              <mat-icon>search</mat-icon>
-            </button>
-            </mat-form-field>
             <div class="card-body">
               <div class="row">
-                <mat-form-field class="example-full-width">
-                  <input
-                    type="text"
-                    matInput
-                    placeholder="ID"
-                    formControlName="idPersonaHorarioAgenda"
-                  />
-                </mat-form-field>
-                <mat-form-field>
-                  <mat-label>DÍA</mat-label>
-                  <mat-select formControlName="dia">
-                    <mat-option
-                      *ngFor="let item of listaSemana"
-                      [value]="item.codigo"
+                <div class="col-6">
+                  <mat-form-field class="example-full-width">
+                    <input
+                      type="text"
+                      matInput
+                      placeholder="ID"
+                      formControlName="idPersonaHorarioAgenda"
+                    />
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>DÍA</mat-label>
+                    <mat-select formControlName="dia">
+                      <mat-option
+                        *ngFor="let item of listaSemana"
+                        [value]="item.codigo"
+                      >
+                        {{ item.valor }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="col-6">
+                  <mat-form-field class="example-full-width">
+                    <input
+                      type="search"
+                      matInput
+                      placeholder="EMPLEADO"
+                      formControlName="nombreEmpleado"
+                      (click)="buscadores('empleado')"
+                    />
+                    <button
+                      mat-button
+                      matSuffix
+                      mat-stroked-button
+                      aria-label="search"
+                      (click)="buscadores('empleado')"
                     >
-                      {{ item.valor }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
+                      <mat-icon>search</mat-icon>
+                    </button>
+                  </mat-form-field>
+                </div>
               </div>
             </div>
             <div class="card-footer">
