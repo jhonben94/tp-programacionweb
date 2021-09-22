@@ -9,7 +9,11 @@ import {
   deleteEmptyData,
 } from "../../utlis";
 import { startWith, switchMap, catchError, map } from "rxjs/operators";
-import { CategoriaService, FichaService } from "src/app/services";
+import {
+  CategoriaService,
+  FichaService,
+  TipoProductoService,
+} from "src/app/services";
 import { MatDialog } from "@angular/material/dialog";
 import swal from "sweetalert2";
 import { FichaEditComponent } from "./ficha-edit/ficha-edit.component";
@@ -132,13 +136,14 @@ export class FichaComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   listaCategoria: any[] = [];
-
+  listaTipoProducto: any[] = [];
   constructor(
     private fb: FormBuilder,
     private service: FichaService,
     public dialog: MatDialog,
     private router: Router,
-    private categoriaService: CategoriaService
+    private categoriaService: CategoriaService,
+    private tipoProductoService: TipoProductoService
   ) {
     this.filtrosForm = this.fb.group({
       motivoConsulta: [""],
@@ -150,6 +155,7 @@ export class FichaComponent implements OnInit {
       nombreCliente: [""],
       fechaDesde: [""],
       fechaHasta: [""],
+      idCategoria: [""],
       idTipoProducto: [""],
     });
   }
@@ -159,6 +165,11 @@ export class FichaComponent implements OnInit {
       this.listaCategoria = res.lista;
     });
     this.paginator.pageSize = CANTIDAD_PAG_DEFAULT;
+
+    this.filtrosForm.get("idCategoria").valueChanges.subscribe((x) => {
+      console.log(x);
+      this.buscarTipoProducto(x);
+    });
   }
 
   ngAfterViewInit() {
@@ -413,7 +424,16 @@ export class FichaComponent implements OnInit {
         break;
     }
   }
-  cambioCategoria(data) {
-    console.log(data);
+  buscarTipoProducto(idCategoria) {
+    console.log("buscar");
+
+    this.tipoProductoService
+      .listarRecurso({
+        ejemplo: JSON.stringify({ idCategoria }),
+      })
+      .subscribe((res: any) => {
+        this.f.idTipoProducto.setValue(null);
+        this.listaTipoProducto = res.lista;
+      });
   }
 }

@@ -36,10 +36,7 @@
                 <div class="col-md-6">
                   <mat-form-field>
                     <mat-label>CATEGORÍA</mat-label>
-                    <mat-select
-                      formControlName="idCategoria"
-                      (change)="saverange($event)"
-                    >
+                    <mat-select formControlName="idCategoria">
                       <mat-option
                         *ngFor="let item of categorias"
                         [value]="item.idCategoria"

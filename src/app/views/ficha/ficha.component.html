@@ -21,7 +21,7 @@
           >
             <div class="card-body">
               <div class="row">
-                <div class="col-6">
+                <div class="col-4">
                   <mat-form-field class="example-full-width">
                     <input
                       type="text"
@@ -67,7 +67,7 @@
                     <mat-datepicker #picker2></mat-datepicker>
                   </mat-form-field>
                 </div>
-                <div class="col-6">
+                <div class="col-4">
                   <mat-form-field class="example-full-width">
                     <input
                       type="text"
@@ -112,12 +112,26 @@
                       <mat-icon>search</mat-icon>
                     </button>
                   </mat-form-field>
-                  <mat-form-field>
+                </div>
+                <div class="col-4">
+                  <mat-form-field class="example-full-width">
                     <mat-label>CATEGORÍA</mat-label>
                     <mat-select formControlName="idCategoria">
                       <mat-option
                         *ngFor="let item of listaCategoria"
                         [value]="item.idCategoria"
+                      >
+                        {{ item.descripcion }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+
+                  <mat-form-field class="example-full-width">
+                    <mat-label>TIPO PRODUCTO</mat-label>
+                    <mat-select formControlName="idTipoProducto">
+                      <mat-option
+                        *ngFor="let item of listaTipoProducto"
+                        [value]="item.listaTipoProducto"
                       >
                         {{ item.descripcion }}
                       </mat-option>
