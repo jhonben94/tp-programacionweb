@@ -86,7 +86,7 @@ export class CrearReservaComponent implements OnInit {
     private reserva: ReservasService
   ) {
     this.filtrosForm = this.fb.group({
-      fecha: ["", Validators.required],
+      fecha: [""],
       idEmpleado: [""],
       nombreEmpleado: ["", Validators.required],
       disponible: [""],

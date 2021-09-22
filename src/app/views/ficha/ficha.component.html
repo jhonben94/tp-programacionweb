@@ -15,54 +15,113 @@
               <strong>Filtros de Búsqueda</strong>
             </mat-panel-title>
           </mat-expansion-panel-header>
-          <form [formGroup]="filtrosForm" (keydown.enter)="$event.preventDefault()">
+          <form
+            [formGroup]="filtrosForm"
+            (keydown.enter)="$event.preventDefault()"
+          >
             <div class="card-body">
               <div class="row">
                 <div class="col-6">
                   <mat-form-field class="example-full-width">
-                    <input type="text" matInput placeholder="MOTIVO DE CONSULTA" formControlName="motivoConsulta" />
+                    <input
+                      type="text"
+                      matInput
+                      placeholder="MOTIVO DE CONSULTA"
+                      formControlName="motivoConsulta"
+                    />
                   </mat-form-field>
                   <mat-form-field class="example-full-width">
-                    <input type="text" matInput placeholder="DIAGNOSTICO" formControlName="diagnostico" />
+                    <input
+                      type="text"
+                      matInput
+                      placeholder="DIAGNOSTICO"
+                      formControlName="diagnostico"
+                    />
                   </mat-form-field>
                   <mat-form-field>
-                    <input matInput [matDatepicker]="picker" placeholder="FECHA DESDE" formControlName="fechaDesde"
-                      (click)="picker.open()" />
-                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <input
+                      matInput
+                      [matDatepicker]="picker"
+                      placeholder="FECHA DESDE"
+                      formControlName="fechaDesde"
+                      (click)="picker.open()"
+                    />
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="picker"
+                    ></mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker>
                   </mat-form-field>
                   <mat-form-field>
-                    <input matInput [matDatepicker]="picker2" placeholder="FECHA HASTA" formControlName="fechaHasta"
-                      (click)="picker2.open()" />
-                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <input
+                      matInput
+                      [matDatepicker]="picker2"
+                      placeholder="FECHA HASTA"
+                      formControlName="fechaHasta"
+                      (click)="picker2.open()"
+                    />
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="picker2"
+                    ></mat-datepicker-toggle>
                     <mat-datepicker #picker2></mat-datepicker>
                   </mat-form-field>
                 </div>
                 <div class="col-6">
                   <mat-form-field class="example-full-width">
-                    <input type="text" matInput placeholder="OBSERVACION" formControlName="observacion" />
+                    <input
+                      type="text"
+                      matInput
+                      placeholder="OBSERVACION"
+                      formControlName="observacion"
+                    />
                   </mat-form-field>
                   <mat-form-field class="example-full-width">
-                    <input type="search" matInput placeholder="EMPLEADO" formControlName="nombreEmpleado"
-                      (click)="buscadores('empleado')" />
-                    <button mat-button matSuffix mat-stroked-button aria-label="search"
-                      (click)="buscadores('empleado')">
+                    <input
+                      type="search"
+                      matInput
+                      placeholder="EMPLEADO"
+                      formControlName="nombreEmpleado"
+                      (click)="buscadores('empleado')"
+                    />
+                    <button
+                      mat-button
+                      matSuffix
+                      mat-stroked-button
+                      aria-label="search"
+                      (click)="buscadores('empleado')"
+                    >
                       <mat-icon>search</mat-icon>
                     </button>
                   </mat-form-field>
                   <mat-form-field class="example-full-width">
-                    <input type="search" matInput placeholder="CLIENTE" formControlName="nombreCliente"
-                      (click)="buscadores('cliente')" />
-                    <button mat-button matSuffix mat-stroked-button aria-label="search" (click)="buscadores('cliente')">
+                    <input
+                      type="search"
+                      matInput
+                      placeholder="CLIENTE"
+                      formControlName="nombreCliente"
+                      (click)="buscadores('cliente')"
+                    />
+                    <button
+                      mat-button
+                      matSuffix
+                      mat-stroked-button
+                      aria-label="search"
+                      (click)="buscadores('cliente')"
+                    >
                       <mat-icon>search</mat-icon>
                     </button>
                   </mat-form-field>
-                  <mat-form-field class="example-full-width">
-                    <input type="search" matInput placeholder="TIPO PRODUCTO" formControlName="idTipoProducto"
-                      (click)="buscadores('idTipoProducto')" />
-                    <button mat-button matSuffix mat-stroked-button aria-label="search" (click)="buscadores('idTipoProducto')">
-                      <mat-icon>search</mat-icon>
-                    </button>
+                  <mat-form-field>
+                    <mat-label>CATEGORÍA</mat-label>
+                    <mat-select formControlName="idCategoria">
+                      <mat-option
+                        *ngFor="let item of listaCategoria"
+                        [value]="item.idCategoria"
+                      >
+                        {{ item.descripcion }}
+                      </mat-option>
+                    </mat-select>
                   </mat-form-field>
                 </div>
               </div>
@@ -70,18 +129,35 @@
             <div class="card-footer">
               <div class="row">
                 <div class="form-group">
-                  <button class="btn btn-accent" (click)="openDialog()" data-toggle="modal" tabindex="-1" role="dialog"
-                    mat-raised-button color="warn">
+                  <button
+                    class="btn btn-accent"
+                    (click)="openDialog()"
+                    data-toggle="modal"
+                    tabindex="-1"
+                    role="dialog"
+                    mat-raised-button
+                    color="warn"
+                  >
                     Agregar
                   </button>
                 </div>
               </div>
               <div class="row">
                 <div class="form-group">
-                  <button mat-raised-button type="button" class="btn btn-primary" (click)="buscar()">
+                  <button
+                    mat-raised-button
+                    type="button"
+                    class="btn btn-primary"
+                    (click)="buscar()"
+                  >
                     Buscar
                   </button>
-                  <button mat-raised-button type="button" class="btn btn-default btn-fill btn-wd" (click)="limpiar()">
+                  <button
+                    mat-raised-button
+                    type="button"
+                    class="btn btn-default btn-fill btn-wd"
+                    (click)="limpiar()"
+                  >
                     Limpiar
                   </button>
                 </div>
@@ -92,15 +168,25 @@
       </mat-accordion>
 
       <div class="card">
-        <table mat-table [dataSource]="data" class="example-table" matSort matSortActive="idCliente" matSortDisableClear
-          matSortDirection="desc">
+        <table
+          mat-table
+          [dataSource]="data"
+          class="example-table"
+          matSort
+          matSortActive="idCliente"
+          matSortDisableClear
+          matSortDirection="desc"
+        >
           <!-- Number Column -->
           <ng-container matColumnDef="number">
             <th mat-header-cell *matHeaderCellDef>#</th>
             <td mat-cell *matCellDef="let row; let i = index">{{ i + 1 }}</td>
           </ng-container>
           <!-- definicion dinamica de las columnas -->
-          <ng-container *ngFor="let columna of listaColumnas" [matColumnDef]="columna.matDef">
+          <ng-container
+            *ngFor="let columna of listaColumnas"
+            [matColumnDef]="columna.matDef"
+          >
             <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
               <strong>{{ columna.descripcion }}</strong>
             </th>
@@ -116,10 +202,14 @@
             </th>
             <td mat-cell *matCellDef="let row" style="text-align: center">
               <button ngbTooltip="Eliminar" mat-button>
-                <mat-icon color="warn" data-action-type="eliminar">cancel</mat-icon>
+                <mat-icon color="warn" data-action-type="eliminar"
+                  >cancel</mat-icon
+                >
               </button>
               <button ngbTooltip="Editar" mat-button>
-                <mat-icon color="primary" data-action-type="editar">edit</mat-icon>
+                <mat-icon color="primary" data-action-type="editar"
+                  >edit</mat-icon
+                >
               </button>
               <!-- <button ngbTooltip="Activar" mat-button>
                   <mat-icon color="accent" data-action-type="activar"
@@ -130,9 +220,17 @@
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="acciones(row, $event)"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumns"
+            (click)="acciones(row, $event)"
+          ></tr>
         </table>
-        <mat-paginator [length]="resultsLength" [pageSizeOptions]="opcionPagina" showFirstLastButtons></mat-paginator>
+        <mat-paginator
+          [length]="resultsLength"
+          [pageSizeOptions]="opcionPagina"
+          showFirstLastButtons
+        ></mat-paginator>
       </div>
     </div>
   </div>

@@ -7,23 +7,25 @@ import {
   CANTIDAD_PAG_DEFAULT,
   CANTIDAD_PAG_LIST,
   deleteEmptyData,
+  obtenerDia,
+  WEEKDAYS,
 } from "../../utlis";
 import { startWith, switchMap, catchError, map } from "rxjs/operators";
-import { CategoriaService, FichaService } from "src/app/services";
+import { PersonaHorarioAgendaService } from "src/app/services";
 import { MatDialog } from "@angular/material/dialog";
+
 import swal from "sweetalert2";
-import { FichaEditComponent } from "./ficha-edit/ficha-edit.component";
+import { PersonaHorarioAgendaEditComponent } from "./persona-horario-agenda-edit/persona-horario-agenda-edit.component";
+import { Router } from "@angular/router";
 import { BuscadorEmpleadoComponent } from "../buscadores/buscador-empleado/buscador-empleado.component";
 import { BuscadorClienteComponent } from "../buscadores/buscador-cliente/buscador-cliente.component";
-import { Router } from "@angular/router";
-import { BuscadorTipoProductoComponent } from "../buscadores/buscador-tipo-producto/buscador-tipo-producto/buscador-tipo-producto.component";
 
 @Component({
-  selector: "app-ficha",
-  templateUrl: "./ficha.component.html",
-  styleUrls: ["./ficha.component.css"],
+  selector: "app-persona-horario-agenda",
+  templateUrl: "./persona-horario-agenda.component.html",
+  styleUrls: ["./persona-horario-agenda.component.css"],
 })
-export class FichaComponent implements OnInit {
+export class PersonaHorarioAgendaComponent implements OnInit {
   /**
    * @type {boolean}
    * @description Flag que maneja el Expansion Panel de filtros
@@ -60,14 +62,12 @@ export class FichaComponent implements OnInit {
    * @description Definicion de las columnas a ser visualizadas
    */
   displayedColumns: string[] = [
-    "idFichaClinica",
-    "motivoConsulta",
-    "diagnostico",
-    "observacion",
-    "fechaHoraCadenaFormateada",
+    "idPersonaHorarioAgenda",
+    "dia",
+    "horaApertura",
+    "horaCierre",
+    "intervaloMinutos",
     "idEmpleado",
-    "idCliente",
-    "idTipoProducto",
     "accion",
   ];
 
@@ -78,50 +78,36 @@ export class FichaComponent implements OnInit {
    */
   listaColumnas: any = [
     {
-      matDef: "idFichaClinica",
-      label: "idFichaClinica",
-      descripcion: "ID FICHA",
+      matDef: "idPersonaHorarioAgenda",
+      label: "idPersonaHorarioAgenda",
+      descripcion: "ID",
     },
     {
-      matDef: "motivoConsulta",
-      label: "motivoConsulta",
-      descripcion: "MOTIVO DE CONSULTA",
+      matDef: "dia",
+      label: "dia",
+      descripcion: "DIA",
     },
     {
-      matDef: "diagnostico",
-      label: "diagnostico",
-      descripcion: "DIAGNOSTICO",
+      matDef: "horaApertura",
+      label: "horaApertura",
+      descripcion: "HORA DE APERTURA",
     },
     {
-      matDef: "observacion",
-      label: "observacion",
-      descripcion: "OBSERVACIÓN",
+      matDef: "horaCierre",
+      label: "horaCierre",
+      descripcion: "HORA DE CIERRE",
     },
     {
-      matDef: "fechaHoraCadenaFormateada",
-      label: "fechaHoraCadenaFormateada",
-      descripcion: "FECHA",
-    },
-    {
-      matDef: "idCliente",
-      label: "idCliente",
-      descripcion: "CLIENTE",
-      relacion: true,
-      columnaRelacion: ["nombre"],
+      matDef: "intervaloMinutos",
+      label: "intervaloMinutos",
+      descripcion: "INTERVALO MINUTOS",
     },
     {
       matDef: "idEmpleado",
       label: "idEmpleado",
       relacion: true,
       descripcion: "EMPLEADO",
-      columnaRelacion: ["nombre"],
-    },
-    {
-      matDef: "idTipoProducto",
-      label: "idTipoProducto",
-      descripcion: "TIPO PRODUCTO",
-      relacion: true,
-      columnaRelacion: ["descripcion"],
+      columnaRelacion: ["nombre", "apellido"],
     },
   ];
   /**
@@ -131,34 +117,24 @@ export class FichaComponent implements OnInit {
   data: any[] = [];
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
-  listaCategoria: any[] = [];
+  listaSemana: { codigo: number; valor: string }[];
 
   constructor(
     private fb: FormBuilder,
-    private service: FichaService,
+    private service: PersonaHorarioAgendaService,
     public dialog: MatDialog,
-    private router: Router,
-    private categoriaService: CategoriaService
+    private router: Router
   ) {
     this.filtrosForm = this.fb.group({
-      motivoConsulta: [""],
-      diagnostico: [""],
-      observacion: [""],
+      dia: [""],
       idEmpleado: [""],
-      idCliente: [""],
       nombreEmpleado: [""],
-      nombreCliente: [""],
-      fechaDesde: [""],
-      fechaHasta: [""],
-      idTipoProducto: [""],
     });
   }
 
   ngOnInit(): void {
-    this.categoriaService.listarRecurso({}).subscribe((res: any) => {
-      this.listaCategoria = res.lista;
-    });
     this.paginator.pageSize = CANTIDAD_PAG_DEFAULT;
+    this.listaSemana = WEEKDAYS;
   }
 
   ngAfterViewInit() {
@@ -177,18 +153,15 @@ export class FichaComponent implements OnInit {
         startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
-
           let filterData = this.filtrosForm.value;
           delete filterData.nombreEmpleado;
-          delete filterData.nombreCliente;
-
           const params = {
             cantidad: this.paginator.pageSize,
             inicio: this.retornaInicio(),
             orderBy: this.sort.active,
             orderDir: this.sort.direction,
-
-            ejemplo: JSON.stringify(deleteEmptyData(filterData)),
+            like: "S",
+            ejemplo: JSON.stringify(deleteEmptyData(this.filtrosForm.value)),
           };
           return this.service.listarRecurso(params);
         }),
@@ -209,44 +182,11 @@ export class FichaComponent implements OnInit {
       .subscribe((data) => (this.data = data));
   }
 
-  openDialog(): void {
-    const dialogRef = this.dialog.open(FichaEditComponent, {
-      width: "",
-      data: {
-        title: "Agregar Categoria",
-        label: "Se agrega categoria correspondiente.",
-        entity: {},
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result: any) => {
-      console.log(result);
-
-      if (result) {
-        result.flagVisible = "S";
-        this.service.agregarRecurso(result).subscribe((res) => {
-          console.log(res);
-
-          swal
-            .fire({
-              title: "Éxito!",
-              text: "El registro fue creado correctamente.",
-              icon: "success",
-              customClass: {
-                confirmButton: "btn btn-success",
-              },
-              buttonsStyling: false,
-            })
-            .then(() => {
-              this.limpiar();
-            });
-        });
-      }
-    });
+  agregar(): void {
+    this.router.navigate(["persona-horario-agenda/agregar"]);
   }
-
   acciones(data, e) {
-    const id = "idFichaClinica";
+    const id = "idPersonaHorarioAgenda";
     const actionType = e.target.getAttribute("data-action-type");
     switch (actionType) {
       case "activar":
@@ -286,43 +226,24 @@ export class FichaComponent implements OnInit {
           });
         break;
       case "editar":
-        const dialogRef = this.dialog.open(FichaEditComponent, {
-          width: "",
-          data: {
-            title: "Modificar Categoria",
-            label: "Se modifica categoria: " + data[id],
-            entity: data,
-          },
-        });
-
-        dialogRef.afterClosed().subscribe((result) => {
-          if (result) {
-            this.service.modificarRecurso(result, data[id]).subscribe((res) => {
-              console.log(res);
-              swal
-                .fire({
-                  title: "Éxito!",
-                  text: "El registro fue creado correctamente.",
-                  icon: "success",
-                  customClass: {
-                    confirmButton: "btn btn-success",
-                  },
-                  buttonsStyling: false,
-                })
-                .then(() => {
-                  this.limpiar();
-                });
-            });
-          }
-        });
+        this.router.navigate(["persona-horario-agenda/modificar/", data[id]]);
         break;
       default:
         break;
     }
   }
+
   mostrarCampo(row, columna) {
     if (columna.relacion) {
-      if (row[columna.label] == null) return "";
+      if (row[columna.label] == null) {
+        return "";
+      }
+      if (Array.isArray(columna.columnaRelacion)) {
+        return this.multipleColumnas(
+          row[columna.label],
+          columna.columnaRelacion
+        );
+      }
       return row[columna.label][columna.columnaRelacion];
     } else {
       if (typeof columna.estados != "undefined") {
@@ -331,16 +252,29 @@ export class FichaComponent implements OnInit {
           : columna.estados[1];
         return label;
       }
+      if (columna.label == "dia") {
+        return obtenerDia(row[columna.label]);
+      }
       return row[columna.label];
     }
   }
+  multipleColumnas(valor: any, listaCol: any[]) {
+    let valorRetorno = "";
+    for (let index = 0; index < listaCol.length; index++) {
+      const property = listaCol[index];
+      valorRetorno += valor[property] + " ";
+    }
+    return valorRetorno;
+  }
+
   limpiar() {
     this.filtrosForm.reset();
     this.buscar();
   }
+
   retornaInicio() {
     const cantidad = this.paginator.pageSize;
-    let inicio: any = this.paginator.pageIndex;
+    const inicio: any = this.paginator.pageIndex;
 
     if (this.paginator.pageIndex > 0) {
       return (
@@ -350,6 +284,7 @@ export class FichaComponent implements OnInit {
     }
     return inicio;
   }
+
   buscadores(buscador) {
     let dialogRef = null;
     switch (buscador) {
@@ -393,27 +328,8 @@ export class FichaComponent implements OnInit {
         });
         break;
 
-      case "idTipoProducto":
-        dialogRef = this.dialog.open(BuscadorTipoProductoComponent, {
-          data: {
-            title: "Buscador de Tipo Productos",
-          },
-        });
-
-        dialogRef.afterClosed().subscribe((result: any) => {
-          console.log(result);
-          if (result) {
-            this.f.descripcion.setValue(result.descripcion);
-            this.f.idTipoProducto.setValue(result.idTipoProducto);
-          }
-        });
-        break;
-
       default:
         break;
     }
-  }
-  cambioCategoria(data) {
-    console.log(data);
   }
 }

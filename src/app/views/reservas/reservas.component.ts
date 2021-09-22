@@ -163,6 +163,8 @@ export class ReservasComponent implements OnInit {
           let filterData = this.filtrosForm.value;
           delete filterData.nombreEmpleado;
           delete filterData.nombreCliente;
+          const id = filterData.idEmpleado;
+          delete filterData.idEmpleado;
 
           const params = {
             cantidad: this.paginator.pageSize,
