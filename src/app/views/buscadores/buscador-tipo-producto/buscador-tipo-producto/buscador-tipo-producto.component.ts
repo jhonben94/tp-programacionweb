@@ -9,7 +9,7 @@ import {
   deleteEmptyData,
 } from "../../../../utlis";
 import { startWith, switchMap, catchError, map } from "rxjs/operators";
-import { PersonaService } from "src/app/services";
+import { CategoriaService, PersonaService, TipoProductoService } from "src/app/services";
 import {
   MatDialog,
   MatDialogRef,
@@ -67,6 +67,7 @@ export class BuscadorTipoProductoComponent implements OnInit {
     "idTipoProducto",
     "descripcion",
     "idCategoria",
+    "accion",
   ];
 
   opcionPagina = CANTIDAD_PAG_MODAL_LIST;
@@ -78,19 +79,19 @@ export class BuscadorTipoProductoComponent implements OnInit {
     {
       matDef: "idTipoProducto",
       label: "idTipoProducto",
-      descripcion: "ID",
+      descripcion: "TIPO PROD.",
     },
     {
       matDef: "descripcion",
       label: "descripcion",
-      descripcion: "TIPO DE PRODUCTO",
+      descripcion: "DESCRICIÓN",
     },
     {
       matDef: "idCategoria",
       label: "idCategoria",
+      descripcion: "CATEGORÍA",
       relacion: true,
-      descripcion: "CATEGORIA",
-      columnaRelacion: ["descripcion"],
+      columnaRelacion: "descripcion",
     },
   ];
   /**
@@ -98,12 +99,18 @@ export class BuscadorTipoProductoComponent implements OnInit {
    * @description Lista que contiene los valores para la grilla
    */
   data: any[] = [];
+  /**
+   * @type {Array}
+   * @description Lista que contiene los de las categorias
+   */
+  categorias: any[] = [];
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   constructor(
     private fb: FormBuilder,
-    private service: PersonaService,
+    private service: TipoProductoService,
+    private categoriaService: CategoriaService,
     public dialog: MatDialog,
     private router: Router,
     public dialogRef: MatDialogRef<BuscadorTipoProductoComponent>,
@@ -111,11 +118,15 @@ export class BuscadorTipoProductoComponent implements OnInit {
   ) {
     this.filtrosForm = this.fb.group({
       descripcion: [""],
+      idCategoria: [""],
     });
   }
 
   ngOnInit(): void {
     this.paginator.pageSize = CANTIDAD_PAG_MODAL_DEFAULT;
+    this.categoriaService.listarRecurso({}).subscribe((res: any) => {
+      this.categorias = res.lista;
+    });
   }
 
   ngAfterViewInit() {
