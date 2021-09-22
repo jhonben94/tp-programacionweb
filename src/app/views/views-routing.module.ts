@@ -44,6 +44,14 @@ export const routes: Routes = [
         component: HorarioExcepcionComponent,
       },
       {
+        path: "horario-excepcion/agregar",
+        component: PersonaHorarioAgendaEditComponent,
+      },
+      {
+        path: "horario-excepcion/modificar/:id",
+        component: PersonaHorarioAgendaEditComponent,
+      },
+      {
         path: "persona",
         component: PersonaComponent,
       },

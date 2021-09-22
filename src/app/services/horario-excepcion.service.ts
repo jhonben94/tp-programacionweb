@@ -9,9 +9,7 @@ export class HorarioExcepcionService {
   recurosBaseURL: string = environment.URL_BASE + "/horarioExcepcion/";
   headers = new HttpHeaders({"Content-Type": "application/json"});
 
-  constructor(private http: HttpClient) {
-  }
-
+  constructor(private http: HttpClient) {}
   activarRecurso(id) {
     return this.http.put(this.recurosBaseURL + id + "/activar", {});
   }
@@ -21,26 +19,22 @@ export class HorarioExcepcionService {
       headers: this.headers,
     });
   }
-
   modificarRecurso(recurso, id) {
     return this.http.put(this.recurosBaseURL + id, recurso, {
       headers: this.headers,
     });
   }
-
   eliminarRecurso(id) {
     return this.http.delete(this.recurosBaseURL + id, {
       headers: this.headers,
     });
   }
-
   obtenerRecurso(id) {
     return this.http.get(this.recurosBaseURL + id, {
       headers: this.headers,
     });
   }
-
   listarRecurso(ejemplo) {
-    return this.http.get(this.recurosBaseURL, {params: ejemplo});
+    return this.http.get(this.recurosBaseURL, { params: ejemplo });
   }
 }
