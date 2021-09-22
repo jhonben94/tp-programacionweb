@@ -175,7 +175,7 @@ export class BuscadorTipoProductoComponent implements OnInit {
   }
 
   agregar(): void {
-    this.router.navigate(["persona/agregar"]);
+    this.router.navigate(["tipo-persona/agregar"]);
   }
 
   acciones(data, e) {
@@ -219,7 +219,7 @@ export class BuscadorTipoProductoComponent implements OnInit {
           });
         break;
       case "editar":
-        this.router.navigate(["persona/modificar", data[id]]);
+        this.router.navigate(["tipo-persona/modificar", data[id]]);
         break;
       default:
         break;
