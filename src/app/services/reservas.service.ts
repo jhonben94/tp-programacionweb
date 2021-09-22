@@ -6,7 +6,7 @@ import { environment } from "src/environments/environment";
 })
 export class ReservasService {
   recurosBaseURL: string = environment.URL_BASE + "/reserva/";
-  obtenerReservaURL: string = environment.URL_BASE + "/persona";
+  obtenerReservaURL: string = environment.URL_BASE + "/persona/";
   headers = new HttpHeaders({ "Content-Type": "application/json" });
 
   constructor(private http: HttpClient) {}
@@ -39,10 +39,9 @@ export class ReservasService {
   }
 
   listarReserva(id, filtros) {
-    /* return this.http.get(this.obtenerReservaURL + id + "/agenda/", {
+    return this.http.get(this.obtenerReservaURL + id + "/agenda", {
       params: filtros,
-    }); */
-    console.table([id, filtros]);
+    });
 
     const url = "http://localhost:4200/assets/data.json";
     return this.http.get(url);
