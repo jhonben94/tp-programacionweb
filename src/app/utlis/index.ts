@@ -67,18 +67,15 @@ export const formatearHora = (hora) => {
 };
 
 export function formatearFechaFiltros(date) {
-  var day = date.getDate();
-  var month = date.getMonth();
-  var year = date.getFullYear();
-  var hour = date.getHours();
-  var minutes = date.getMinutes();
-  var seconds = date.getSeconds();
+  console.log(date.getMonth() + 1);
+
+  var day = date.getDate() + "";
+  var month = date.getMonth() + 1 + "";
+  var year = date.getFullYear() + "";
 
   day = checkZero(day);
   month = checkZero(month);
   year = checkZero(year);
-  hour = checkZero(hour);
-  minutes = checkZero(minutes);
-  seconds = checkZero(seconds);
-  return year + month + day;
+
+  return year + "" + month + "" + day + "";
 }

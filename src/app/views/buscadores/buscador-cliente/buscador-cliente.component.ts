@@ -181,13 +181,15 @@ export class BuscadorClienteComponent implements OnInit {
         startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
+          let filterData = this.filtrosForm.value;
+          filterData.soloUsuariosDelSistema = false;
           const params = {
             cantidad: this.paginator.pageSize,
             inicio: this.retornaInicio(),
             orderBy: this.sort.active,
             orderDir: this.sort.direction,
             like: "S",
-            ejemplo: JSON.stringify(deleteEmptyData(this.filtrosForm.value)),
+            ejemplo: JSON.stringify(deleteEmptyData(filterData)),
           };
           return this.service.listarRecurso(params);
         }),
