@@ -222,39 +222,7 @@ export class FichaComponent implements OnInit {
   }
 
   openDialog(): void {
-    const dialogRef = this.dialog.open(FichaEditComponent, {
-      width: "",
-      data: {
-        title: "Agregar Categoria",
-        label: "Se agrega categoria correspondiente.",
-        entity: {},
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result: any) => {
-      console.log(result);
-
-      if (result) {
-        result.flagVisible = "S";
-        this.service.agregarRecurso(result).subscribe((res) => {
-          console.log(res);
-
-          swal
-            .fire({
-              title: "Éxito!",
-              text: "El registro fue creado correctamente.",
-              icon: "success",
-              customClass: {
-                confirmButton: "btn btn-success",
-              },
-              buttonsStyling: false,
-            })
-            .then(() => {
-              this.limpiar();
-            });
-        });
-      }
-    });
+    this.router.navigate(["/ficha/agregar"]);
   }
 
   acciones(data, e) {

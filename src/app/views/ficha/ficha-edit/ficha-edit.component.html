@@ -1,1 +1,157 @@
-<p>ficha-edit works!</p>
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header card-header-primary card-header-icon">
+        <div class="card-icon">
+          <i class="material-icons">article</i>
+        </div>
+        <h4 class="card-title">
+          <strong>{{ titulo }}</strong>
+        </h4>
+      </div>
+
+      <mat-accordion>
+        <mat-expansion-panel [(expanded)]="expanded" class="mat-elevation-z0">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <strong>Filtros de Búsqueda</strong>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <form [formGroup]="form" (keydown.enter)="$event.preventDefault()">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-4">
+                  <mat-form-field class="example-full-width">
+                    <mat-label>CATEGORÍA</mat-label>
+                    <mat-select formControlName="idCategoria">
+                      <mat-option
+                        *ngFor="let item of listaCategoria"
+                        [value]="item.idCategoria"
+                      >
+                        {{ item.descripcion }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+
+                  <mat-form-field class="example-full-width">
+                    <mat-label>TIPO PRODUCTO</mat-label>
+                    <mat-select formControlName="idTipoProducto">
+                      <mat-option
+                        *ngFor="let item of listaTipoProducto"
+                        [value]="item.listaTipoProducto"
+                      >
+                        {{ item.descripcion }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+
+                  <mat-form-field class="example-full-width">
+                    <input
+                      type="text"
+                      matInput
+                      placeholder="MOTIVO DE CONSULTA"
+                      formControlName="motivoConsulta"
+                    />
+                  </mat-form-field>
+                </div>
+                <div class="col-4">
+                  <mat-form-field class="example-full-width">
+                    <input
+                      type="text"
+                      matInput
+                      placeholder="DIAGNOSTICO"
+                      formControlName="diagnostico"
+                    />
+                  </mat-form-field>
+                  <mat-form-field>
+                    <input
+                      matInput
+                      [matDatepicker]="picker"
+                      placeholder="FECHA DESDE"
+                      formControlName="fechaDesde"
+                      (click)="picker.open()"
+                    />
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="picker"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                  <mat-form-field class="example-full-width">
+                    <input
+                      type="text"
+                      matInput
+                      placeholder="OBSERVACION"
+                      formControlName="observacion"
+                    />
+                  </mat-form-field>
+                </div>
+                <div class="col-4">
+                  <mat-form-field class="example-full-width">
+                    <input
+                      type="search"
+                      matInput
+                      placeholder="EMPLEADO"
+                      formControlName="nombreEmpleado"
+                      (click)="buscadores('empleado')"
+                    />
+                    <button
+                      mat-button
+                      matSuffix
+                      mat-stroked-button
+                      aria-label="search"
+                      (click)="buscadores('empleado')"
+                    >
+                      <mat-icon>search</mat-icon>
+                    </button>
+                  </mat-form-field>
+                  <mat-form-field class="example-full-width">
+                    <input
+                      type="search"
+                      matInput
+                      placeholder="CLIENTE"
+                      formControlName="nombreCliente"
+                      (click)="buscadores('cliente')"
+                    />
+                    <button
+                      mat-button
+                      matSuffix
+                      mat-stroked-button
+                      aria-label="search"
+                      (click)="buscadores('cliente')"
+                    >
+                      <mat-icon>search</mat-icon>
+                    </button>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="row">
+                <div class="form-group">
+                  <button
+                    mat-raised-button
+                    type="button"
+                    class="btn btn-primary"
+                    (click)="confirmar()"
+                    [disabled]="!form.valid"
+                  >
+                    Confirmar
+                  </button>
+                  <button
+                    mat-raised-button
+                    type="button"
+                    class="btn btn-default btn-fill btn-wd"
+                    (click)="cancelar()"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </div>
+</div>
