@@ -192,13 +192,14 @@ export class FichaComponent implements OnInit {
           let filterData = this.filtrosForm.value;
           delete filterData.nombreEmpleado;
           delete filterData.nombreCliente;
+          delete filterData.idCategoria;
 
           const params = {
             cantidad: this.paginator.pageSize,
             inicio: this.retornaInicio(),
             orderBy: this.sort.active,
             orderDir: this.sort.direction,
-
+            like: "S",
             ejemplo: JSON.stringify(deleteEmptyData(filterData)),
           };
           return this.service.listarRecurso(params);
