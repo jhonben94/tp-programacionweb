@@ -10,6 +10,7 @@ import { routes } from "./views-routing.module";
 import { CategoriaEditComponent } from "./categoria/categoria-edit/categoria-edit.component";
 import { TipoProductoComponent } from "./tipo-producto/tipo-producto.component";
 import { TipoProductoEditComponent } from "./tipo-producto/tipo-producto-edit/tipo-producto-edit.component";
+
 import { PresentacionProductoComponent } from "./presentacion-producto/presentacion-producto.component";
 import { PresentacionProductoEditComponent } from "./presentacion-producto/presentacion-producto-edit/presentacion-producto-edit.component";
 import { PersonaComponent } from "./persona/persona.component";
@@ -22,6 +23,9 @@ import { PersonaHorarioAgendaComponent } from './persona-horario-agenda/persona-
 import { PersonaHorarioAgendaEditComponent } from './persona-horario-agenda/persona-horario-agenda-edit/persona-horario-agenda-edit.component';
 import { HorarioExcepcionComponent } from './horario-excepcion/horario-excepcion.component';
 import { HorarioExcepcionEditComponent } from './horario-excepcion/horario-excepcion-edit/horario-excepcion-edit.component';
+import { FichaComponent } from './ficha/ficha.component';
+import { FichaEditComponent } from './ficha/ficha-edit/ficha-edit.component';
+import { BuscadorTipoProductoComponent } from './buscadores/buscador-tipo-producto/buscador-tipo-producto/buscador-tipo-producto.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +37,8 @@ import { HorarioExcepcionEditComponent } from './horario-excepcion/horario-excep
     PresentacionProductoEditComponent,
     PersonaComponent,
     PersonaEditComponent,
+    FichaComponent,
+    FichaEditComponent,
     ReservasComponent,
     BuscadorClienteComponent,
     BuscadorEmpleadoComponent,
@@ -41,6 +47,7 @@ import { HorarioExcepcionEditComponent } from './horario-excepcion/horario-excep
     PersonaHorarioAgendaEditComponent,
     HorarioExcepcionComponent,
     HorarioExcepcionEditComponent,
+    BuscadorTipoProductoComponent,
   ],
   imports: [
     CommonModule,
@@ -57,4 +64,4 @@ import { HorarioExcepcionEditComponent } from './horario-excepcion/horario-excep
     BuscadorClienteComponent,
   ],
 })
-export class ViewsModule {}
+export class ViewsModule { }

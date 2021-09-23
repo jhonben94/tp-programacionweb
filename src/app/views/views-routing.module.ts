@@ -1,6 +1,7 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { CategoriaComponent } from "./categoria/categoria.component";
+import { FichaComponent } from "./ficha/ficha.component";
 import { PersonaEditComponent } from "./persona/persona-edit/persona-edit.component";
 import { PersonaComponent } from "./persona/persona.component";
 import { PresentacionProductoComponent } from "./presentacion-producto/presentacion-producto.component";
@@ -54,6 +55,11 @@ export const routes: Routes = [
       {
         path: "persona/modificar/:id",
         component: PersonaEditComponent,
+      },
+      {
+        path: "ficha",
+        component: FichaComponent,
+
       },
       {
         path: "reserva",

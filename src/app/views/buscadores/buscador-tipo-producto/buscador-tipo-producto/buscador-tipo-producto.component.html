@@ -1,0 +1,105 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header card-header-primary card-header-icon">
+                <div class="card-icon">
+                    <i class="material-icons">person</i>
+                </div>
+                <h4 class="card-title">
+                    <strong>{{ dataModal.title }}</strong>
+                </h4>
+            </div>
+            <mat-accordion>
+                <mat-expansion-panel [(expanded)]="expanded" class="mat-elevation-z0">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <strong>Filtros de Búsqueda</strong>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+
+                    <form [formGroup]="filtrosForm" (keydown.enter)="$event.preventDefault()">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <mat-form-field class="example-full-width">
+                                        <input type="text" matInput placeholder="TIPO PRODUCTO"
+                                            formControlName="descripcion" />
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-6">
+                                    <mat-form-field>
+                                        <mat-label>CATEGORÍA</mat-label>
+                                        <mat-select formControlName="idCategoria">
+                                            <mat-option *ngFor="let item of categorias" [value]="item.idCategoria">
+                                                {{ item.descripcion }}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="row"></div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <button mat-raised-button type="button" class="btn btn-primary" (click)="buscar()">
+                                        Buscar
+                                    </button>
+                                    <button mat-raised-button type="button" class="btn btn-default btn-fill btn-wd"
+                                        (click)="limpiar()">
+                                        Limpiar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </mat-expansion-panel>
+            </mat-accordion>
+
+            <div class="card">
+                <table mat-table [dataSource]="data" class="example-table" matSort matSortActive="idTipoProducto"
+                    matSortDisableClear matSortDirection="desc">
+                    <!-- Number Column -->
+                    <ng-container matColumnDef="number">
+                        <th mat-header-cell *matHeaderCellDef>#</th>
+                        <td mat-cell *matCellDef="let row; let i = index">{{ i + 1 }}</td>
+                    </ng-container>
+                    <!-- definicion dinamica de las columnas -->
+                    <ng-container *ngFor="let columna of listaColumnas" [matColumnDef]="columna.matDef">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+                            <strong>{{ columna.descripcion }}</strong>
+                        </th>
+                        <td mat-cell *matCellDef="let row">
+                            {{ mostrarCampo(row, columna) }}
+                        </td>
+                    </ng-container>
+
+                    <!-- Accion Column -->
+                    <ng-container matColumnDef="accion">
+                        <th mat-header-cell *matHeaderCellDef>
+                            <strong>ACCIONES</strong>
+                        </th>
+                        <td mat-cell *matCellDef="let row" style="text-align: center">
+                            <button matTooltip="Eliminar" mat-button>
+                                <mat-icon color="warn" data-action-type="eliminar">cancel</mat-icon>
+                            </button>
+                            <button matTooltip="Editar" mat-button>
+                                <mat-icon color="primary" data-action-type="editar">edit</mat-icon>
+                            </button>
+                            <!-- <button matTooltip="Activar" mat-button>
+                                <mat-icon color="accent" data-action-type="activar"
+                                  >check_circle</mat-icon
+                                >
+                              </button> -->
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="acciones(row, $event)"></tr>
+                </table>
+                <mat-paginator [length]="resultsLength" [pageSizeOptions]="opcionPagina" showFirstLastButtons>
+                </mat-paginator>
+            </div>
+        </div>
+    </div>
+</div>
