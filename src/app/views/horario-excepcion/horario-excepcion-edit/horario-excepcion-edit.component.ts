@@ -1,16 +1,20 @@
-import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {MatDialog} from '@angular/material/dialog';
-import {ActivatedRoute, Router} from '@angular/router';
-import {deleteEmptyData, formatearFechaFiltros, WEEKDAYS} from '../../../utlis';
-import swal from 'sweetalert2';
-import {BuscadorEmpleadoComponent} from '../../buscadores/buscador-empleado/buscador-empleado.component';
-import {HorarioExcepcionService} from '../../../services';
+import { Component, OnInit } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { MatDialog } from "@angular/material/dialog";
+import { ActivatedRoute, Router } from "@angular/router";
+import {
+  deleteEmptyData,
+  formatearFechaFiltros,
+  WEEKDAYS,
+} from "../../../utlis";
+import swal from "sweetalert2";
+import { BuscadorEmpleadoComponent } from "../../buscadores/buscador-empleado/buscador-empleado.component";
+import { HorarioExcepcionService } from "../../../services";
 
 @Component({
-  selector: 'app-horario-excepcion-edit',
-  templateUrl: './horario-excepcion-edit.component.html',
-  styleUrls: ['./horario-excepcion-edit.component.css']
+  selector: "app-horario-excepcion-edit",
+  templateUrl: "./horario-excepcion-edit.component.html",
+  styleUrls: ["./horario-excepcion-edit.component.css"],
 })
 export class HorarioExcepcionEditComponent implements OnInit {
   form: FormGroup;
@@ -21,15 +25,15 @@ export class HorarioExcepcionEditComponent implements OnInit {
     descripcion: [""],
   });
   constructor(
-      public dialog: MatDialog,
-      private fb: FormBuilder,
-      private service: HorarioExcepcionService,
-      private route: ActivatedRoute,
-      private router: Router
+    public dialog: MatDialog,
+    private fb: FormBuilder,
+    private service: HorarioExcepcionService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.form = this.fb.group({
       fechaCadena: ["", Validators.required],
-      flagEsHabilitar: ["", Validators.required],
+      flagEsHabilitar: [""],
       idEmpleado: ["", Validators.required],
       nombreEmpleado: [""],
     });
@@ -49,78 +53,86 @@ export class HorarioExcepcionEditComponent implements OnInit {
         let filterData = this.filtrosForm.value;
         filterData.fechaCadena = formatearFechaFiltros(filterData.fechaCadena);
         this.f.fechaCadena.setValue(res.fechaCadena);
-        this.f.flagEsHabilitar.setValue( res.flagEsHabilitar=='S'? true:false );
+        this.f.flagEsHabilitar.setValue(
+          res.flagEsHabilitar == "S" ? true : false
+        );
         this.f.idEmpleado.setValue(res.idEmpleado.idPersona);
         this.f.nombreEmpleado.setValue(res.idEmpleado.nombreCompleto);
       });
     } else {
       this.titulo = "AGREGAR HORARIO EXCEPCIONAL";
+      this.f.flagEsHabilitar.setValue(true);
     }
   }
 
   confirmar() {
-    let valorForm = this.form.value;
-
+    let valorForm = Object.assign({}, this.form.value);
     delete valorForm.nombreEmpleado;
+    valorForm.fechaCadena = formatearFechaFiltros(valorForm.fechaCadena);
+    valorForm.flagEsHabilitar = valorForm.flagEsHabilitar ? "S" : "N";
+    valorForm.idEmpleado = {
+      idPersona: valorForm.idEmpleado,
+    };
     console.log(valorForm);
+    console.log(this.form.valid);
 
     if (this.id) {
       this.service.modificarRecurso(valorForm, this.id).subscribe(
-          (res) => {
-            swal
-                .fire({
-                  title: "Éxito!",
-                  text: "El registro fue modificado correctamente.",
-                  icon: "success",
-                  customClass: {
-                    confirmButton: "btn btn-success",
-                  },
-                  buttonsStyling: false,
-                })
-                .then(() => {
-                  this.form.reset();
-                });
-          },
-          (err) => {
-            swal.fire({
-              title: "Error!",
-              text: "Error al modificar el registro.",
-              icon: "error",
+        (res) => {
+          swal
+            .fire({
+              title: "Éxito!",
+              text: "El registro fue modificado correctamente.",
+              icon: "success",
               customClass: {
-                confirmButton: "btn btn-info",
+                confirmButton: "btn btn-success",
               },
               buttonsStyling: false,
+            })
+            .then(() => {
+              this.form.reset();
             });
-          }
+        },
+        (err) => {
+          swal.fire({
+            title: "Error!",
+            text: "Error al modificar el registro.",
+            icon: "error",
+            customClass: {
+              confirmButton: "btn btn-info",
+            },
+            buttonsStyling: false,
+          });
+        }
       );
     } else {
       this.service.agregarRecurso(valorForm).subscribe(
-          (res) => {
-            swal
-                .fire({
-                  title: "Éxito!",
-                  text: "El registro fue creado correctamente.",
-                  icon: "success",
-                  customClass: {
-                    confirmButton: "btn btn-success",
-                  },
-                  buttonsStyling: false,
-                })
-                .then(() => {
-                  this.form.reset();
-                });
-          },
-          (err) => {
-            swal.fire({
-              title: "Error!",
-              text: "Error al guardar el registro.",
-              icon: "error",
+        (res) => {
+          swal
+            .fire({
+              title: "Éxito!",
+              text: "El registro fue creado correctamente.",
+              icon: "success",
               customClass: {
-                confirmButton: "btn btn-info",
+                confirmButton: "btn btn-success",
               },
               buttonsStyling: false,
+            })
+            .then(() => {
+              this.form.reset();
             });
-          }
+        },
+        (err) => {
+          swal.fire({
+            title: "Error!",
+            text: "Error al guardar el registro.",
+            icon: "error",
+            customClass: {
+              confirmButton: "btn btn-info",
+            },
+            buttonsStyling: false,
+          });
+        }
       );
     }
   }
@@ -135,10 +147,9 @@ export class HorarioExcepcionEditComponent implements OnInit {
         });
 
         dialogRef.afterClosed().subscribe((result: any) => {
-          console.log(result);
           if (result) {
             this.f.nombreEmpleado.setValue(
-                result.nombre + " " + result.apellido
+              result.nombre + " " + result.apellido
             );
             this.f.idEmpleado.setValue(result.idPersona);
           } else {

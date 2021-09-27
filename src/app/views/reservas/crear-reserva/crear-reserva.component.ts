@@ -89,7 +89,7 @@ export class CrearReservaComponent implements OnInit {
     private reserva: ReservasService
   ) {
     this.filtrosForm = this.fb.group({
-      fechaCadena: [""],
+      fecha: [""],
       idEmpleado: [""],
       nombreEmpleado: ["", Validators.required],
       disponible: [""],
@@ -103,6 +103,7 @@ export class CrearReservaComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.f.fecha.setValue(new Date("2019-09-06"));
     var mainPanel = document.getElementsByClassName("main-panel")[0];
     $(".modal").on("shown.bs.modal", function () {
       mainPanel.classList.add("no-scroll");
@@ -165,12 +166,13 @@ export class CrearReservaComponent implements OnInit {
     return this.formCliente.controls;
   }
   buscar() {
-    let data = deleteEmptyData(
-      JSON.parse(JSON.stringify(this.filtrosForm.value))
-    );
+    let data = Object.assign({}, this.filtrosForm.value);
+    console.log(data);
+
     const id = data.idEmpleado;
     delete data.idEmpleado;
     delete data.nombreEmpleado;
+    data.fecha = Number(formatearFechaFiltros(data.fecha));
     data.disponible = !data.disponible ? "S" : "N";
     this.selectedRow = null;
     this.reserva.listarReserva(id, data).subscribe((res: any) => {
@@ -253,13 +255,13 @@ export class CrearReservaComponent implements OnInit {
   }
 
   confirmar() {
-    let data = this.filtrosForm.value;
+    let data = Object.assign({}, this.filtrosForm.value);
     console.log(this.filtrosForm.value);
 
     delete data.nombreEmpleado;
     delete data.disponible;
     const idEmp = data.idEmpleado;
-    data.fechaCadena = formatearFechaFiltros(data.fechaCadena);
+    data.fechaCadena = formatearFechaFiltros(data.fecha);
     data.horaInicioCadena = this.selectedRow.horaInicioCadena;
     data.horaFinCadena = this.selectedRow.horaFinCadena;
     const clientDate = this.formCliente.value;
@@ -267,7 +269,7 @@ export class CrearReservaComponent implements OnInit {
     data.idCliente = { idPersona: clientDate.idCliente };
     data.idEmpleado = { idPersona: idEmp };
     data.observacion = clientDate.observacion;
-
+    delete data.fecha;
     deleteEmptyData(data);
 
     this.reserva.agregarRecurso(data).subscribe(
@@ -286,6 +288,7 @@ export class CrearReservaComponent implements OnInit {
             this.filtrosForm.reset();
             this.formCliente.reste();
             this.selectedRow = null;
+            this.data = [];
           });
       },
       (err) => {
