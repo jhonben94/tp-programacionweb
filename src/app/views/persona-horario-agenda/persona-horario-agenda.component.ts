@@ -15,7 +15,10 @@ import { PersonaHorarioAgendaService } from "src/app/services";
 import { MatDialog } from "@angular/material/dialog";
 
 import swal from "sweetalert2";
-import {PersonaHorarioAgendaEditComponent} from './persona-horario-agenda-edit/persona-horario-agenda-edit.component';
+import { PersonaHorarioAgendaEditComponent } from "./persona-horario-agenda-edit/persona-horario-agenda-edit.component";
+import { Router } from "@angular/router";
+import { BuscadorEmpleadoComponent } from "../buscadores/buscador-empleado/buscador-empleado.component";
+import { BuscadorClienteComponent } from "../buscadores/buscador-cliente/buscador-cliente.component";
 
 @Component({
   selector: "app-persona-horario-agenda",
@@ -64,6 +67,7 @@ export class PersonaHorarioAgendaComponent implements OnInit {
     "horaApertura",
     "horaCierre",
     "intervaloMinutos",
+    "idEmpleado",
     "accion",
   ];
 
@@ -98,6 +102,13 @@ export class PersonaHorarioAgendaComponent implements OnInit {
       label: "intervaloMinutos",
       descripcion: "INTERVALO MINUTOS",
     },
+    {
+      matDef: "idEmpleado",
+      label: "idEmpleado",
+      relacion: true,
+      descripcion: "EMPLEADO",
+      columnaRelacion: ["nombre", "apellido"],
+    },
   ];
   /**
    * @type {Array}
@@ -111,18 +122,13 @@ export class PersonaHorarioAgendaComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private service: PersonaHorarioAgendaService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private router: Router
   ) {
     this.filtrosForm = this.fb.group({
-      idPersonaHorarioAgenda: [""],
       dia: [""],
-      horaApertura: [""],
-      horaCierre: [""],
-      intervaloMinutos: [""],
-      ruc: [""],
-      cedula: [""],
-      tipoPersona: [""],
-      fechaNacimiento: [""],
+      idEmpleado: [""],
+      nombreEmpleado: [""],
     });
   }
 
@@ -147,6 +153,8 @@ export class PersonaHorarioAgendaComponent implements OnInit {
         startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
+          let filterData = this.filtrosForm.value;
+          delete filterData.nombreEmpleado;
           const params = {
             cantidad: this.paginator.pageSize,
             inicio: this.retornaInicio(),
@@ -174,42 +182,9 @@ export class PersonaHorarioAgendaComponent implements OnInit {
       .subscribe((data) => (this.data = data));
   }
 
-  openDialog(): void {
-    const dialogRef = this.dialog.open(PersonaHorarioAgendaEditComponent, {
-      width: "",
-      data: {
-        title: "Agregar Categoria",
-        label: "Se agrega categoria correspondiente.",
-        entity: {},
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result: any) => {
-      console.log(result);
-
-      if (result) {
-        result.flagVisible = "S";
-        this.service.agregarRecurso(result).subscribe((res) => {
-          console.log(res);
-
-          swal
-            .fire({
-              title: "Éxito!",
-              text: "El registro fue creado correctamente.",
-              icon: "success",
-              customClass: {
-                confirmButton: "btn btn-success",
-              },
-              buttonsStyling: false,
-            })
-            .then(() => {
-              this.limpiar();
-            });
-        });
-      }
-    });
+  agregar(): void {
+    this.router.navigate(["persona-horario-agenda/agregar"]);
   }
-
   acciones(data, e) {
     const id = "idPersonaHorarioAgenda";
     const actionType = e.target.getAttribute("data-action-type");
@@ -251,44 +226,23 @@ export class PersonaHorarioAgendaComponent implements OnInit {
           });
         break;
       case "editar":
-        const dialogRef = this.dialog.open(PersonaHorarioAgendaEditComponent, {
-          width: "",
-          data: {
-            title: "Modificar Categoria",
-            label: "Se modifica categoria: " + data[id],
-            entity: data,
-          },
-        });
-
-        dialogRef.afterClosed().subscribe((result) => {
-          if (result) {
-            this.service.modificarRecurso(result, data[id]).subscribe((res) => {
-              console.log(res);
-              swal
-                .fire({
-                  title: "Éxito!",
-                  text: "El registro fue creado correctamente.",
-                  icon: "success",
-                  customClass: {
-                    confirmButton: "btn btn-success",
-                  },
-                  buttonsStyling: false,
-                })
-                .then(() => {
-                  this.limpiar();
-                });
-            });
-          }
-        });
+        this.router.navigate(["persona-horario-agenda/modificar/", data[id]]);
         break;
       default:
         break;
     }
   }
+
   mostrarCampo(row, columna) {
     if (columna.relacion) {
       if (row[columna.label] == null) {
         return "";
+      }
+      if (Array.isArray(columna.columnaRelacion)) {
+        return this.multipleColumnas(
+          row[columna.label],
+          columna.columnaRelacion
+        );
       }
       return row[columna.label][columna.columnaRelacion];
     } else {
@@ -304,10 +258,20 @@ export class PersonaHorarioAgendaComponent implements OnInit {
       return row[columna.label];
     }
   }
+  multipleColumnas(valor: any, listaCol: any[]) {
+    let valorRetorno = "";
+    for (let index = 0; index < listaCol.length; index++) {
+      const property = listaCol[index];
+      valorRetorno += valor[property] + " ";
+    }
+    return valorRetorno;
+  }
+
   limpiar() {
     this.filtrosForm.reset();
     this.buscar();
   }
+
   retornaInicio() {
     const cantidad = this.paginator.pageSize;
     const inicio: any = this.paginator.pageIndex;
@@ -319,5 +283,53 @@ export class PersonaHorarioAgendaComponent implements OnInit {
       );
     }
     return inicio;
+  }
+
+  buscadores(buscador) {
+    let dialogRef = null;
+    switch (buscador) {
+      case "empleado":
+        dialogRef = this.dialog.open(BuscadorEmpleadoComponent, {
+          data: {
+            title: "Buscador de Empleados",
+          },
+        });
+
+        dialogRef.afterClosed().subscribe((result: any) => {
+          console.log(result);
+          if (result) {
+            this.f.nombreEmpleado.setValue(
+              result.nombre + " " + result.apellido
+            );
+            this.f.idEmpleado.setValue(result.idPersona);
+          } else {
+            this.f.nombreEmpleado.setValue(null);
+          }
+        });
+        break;
+
+      case "cliente":
+        dialogRef = this.dialog.open(BuscadorClienteComponent, {
+          data: {
+            title: "Buscador de Clientes",
+          },
+        });
+
+        dialogRef.afterClosed().subscribe((result: any) => {
+          console.log(result);
+          if (result) {
+            this.f.nombreCliente.setValue(
+              result.nombre + " " + result.apellido
+            );
+            this.f.idCliente.setValue(result.idPersona);
+          } else {
+            this.f.nombreEmpleado.setValue(null);
+          }
+        });
+        break;
+
+      default:
+        break;
+    }
   }
 }

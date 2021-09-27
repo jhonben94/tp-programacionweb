@@ -6,7 +6,11 @@ import { environment } from "src/environments/environment";
 })
 export class PresentacionProductoService {
   recurosBaseURL: string = environment.URL_BASE + "/presentacionProducto/";
-  headers = new HttpHeaders({ "Content-Type": "application/json" });
+  headers = new HttpHeaders({
+    "Content-Type": "application/json",
+    usuario: "usuario2",
+    "Access-Control-Allow-Origin": "*",
+  });
 
   constructor(private http: HttpClient) {}
   activarRecurso(id) {

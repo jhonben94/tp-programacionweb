@@ -9,21 +9,25 @@ import {
   deleteEmptyData,
 } from "../../utlis";
 import { startWith, switchMap, catchError, map } from "rxjs/operators";
-import { CategoriaService, TipoProductoService } from "src/app/services";
+import {
+  CategoriaService,
+  FichaService,
+  TipoProductoService,
+} from "src/app/services";
 import { MatDialog } from "@angular/material/dialog";
 import swal from "sweetalert2";
-import { ReservasService } from "src/app/services/reservas.service";
+import { FichaEditComponent } from "./ficha-edit/ficha-edit.component";
 import { BuscadorEmpleadoComponent } from "../buscadores/buscador-empleado/buscador-empleado.component";
-import { PersonaComponent } from "../persona/persona.component";
 import { BuscadorClienteComponent } from "../buscadores/buscador-cliente/buscador-cliente.component";
-import { CrearReservaComponent } from "./crear-reserva/crear-reserva.component";
 import { Router } from "@angular/router";
+import { BuscadorTipoProductoComponent } from "../buscadores/buscador-tipo-producto/buscador-tipo-producto/buscador-tipo-producto.component";
+
 @Component({
-  selector: "app-reservas",
-  templateUrl: "./reservas.component.html",
-  styleUrls: ["./reservas.component.css"],
+  selector: "app-ficha",
+  templateUrl: "./ficha.component.html",
+  styleUrls: ["./ficha.component.css"],
 })
-export class ReservasComponent implements OnInit {
+export class FichaComponent implements OnInit {
   /**
    * @type {boolean}
    * @description Flag que maneja el Expansion Panel de filtros
@@ -60,12 +64,14 @@ export class ReservasComponent implements OnInit {
    * @description Definicion de las columnas a ser visualizadas
    */
   displayedColumns: string[] = [
-    "idReserva",
-    "fecha",
-    "horaInicio",
-    "horaFin",
-    "idCliente",
+    "idFichaClinica",
+    "motivoConsulta",
+    "diagnostico",
+    "observacion",
+    "fechaHoraCadenaFormateada",
     "idEmpleado",
+    "idCliente",
+    "idTipoProducto",
     "accion",
   ];
 
@@ -76,38 +82,50 @@ export class ReservasComponent implements OnInit {
    */
   listaColumnas: any = [
     {
-      matDef: "idReserva",
-      label: "idReserva",
-      descripcion: "ID",
+      matDef: "idFichaClinica",
+      label: "idFichaClinica",
+      descripcion: "ID FICHA",
     },
     {
-      matDef: "fecha",
-      label: "fecha",
+      matDef: "motivoConsulta",
+      label: "motivoConsulta",
+      descripcion: "MOTIVO DE CONSULTA",
+    },
+    {
+      matDef: "diagnostico",
+      label: "diagnostico",
+      descripcion: "DIAGNOSTICO",
+    },
+    {
+      matDef: "observacion",
+      label: "observacion",
+      descripcion: "OBSERVACIÓN",
+    },
+    {
+      matDef: "fechaHoraCadenaFormateada",
+      label: "fechaHoraCadenaFormateada",
       descripcion: "FECHA",
-    },
-    {
-      matDef: "horaInicio",
-      label: "horaInicio",
-      descripcion: "HORA INICIO",
-    },
-    {
-      matDef: "horaFin",
-      label: "horaFin",
-      descripcion: "HORA FIN",
     },
     {
       matDef: "idCliente",
       label: "idCliente",
       descripcion: "CLIENTE",
       relacion: true,
-      columnaRelacion: ["nombre", "apellido"],
+      columnaRelacion: ["nombre"],
     },
     {
       matDef: "idEmpleado",
       label: "idEmpleado",
       relacion: true,
       descripcion: "EMPLEADO",
-      columnaRelacion: ["nombre", "apellido"],
+      columnaRelacion: ["nombre"],
+    },
+    {
+      matDef: "idTipoProducto",
+      label: "idTipoProducto",
+      descripcion: "TIPO PRODUCTO",
+      relacion: true,
+      columnaRelacion: ["descripcion"],
     },
   ];
   /**
@@ -115,32 +133,43 @@ export class ReservasComponent implements OnInit {
    * @description Lista que contiene los valores para la grilla
    */
   data: any[] = [];
-  /**
-   * @type {Array}
-   * @description Lista que contiene los de las categorias
-   */
-  categorias: any[] = [];
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
-
+  listaCategoria: any[] = [];
+  listaTipoProducto: any[] = [];
   constructor(
     private fb: FormBuilder,
-    private service: ReservasService,
+    private service: FichaService,
     public dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private categoriaService: CategoriaService,
+    private tipoProductoService: TipoProductoService
   ) {
     this.filtrosForm = this.fb.group({
-      fechaDesde: [""],
-      fechaHasta: [""],
+      motivoConsulta: [""],
+      diagnostico: [""],
+      observacion: [""],
       idEmpleado: [""],
       idCliente: [""],
       nombreEmpleado: [""],
       nombreCliente: [""],
+      fechaDesde: [""],
+      fechaHasta: [""],
+      idCategoria: [""],
+      idTipoProducto: [""],
     });
   }
 
   ngOnInit(): void {
+    this.categoriaService.listarRecurso({}).subscribe((res: any) => {
+      this.listaCategoria = res.lista;
+    });
     this.paginator.pageSize = CANTIDAD_PAG_DEFAULT;
+
+    this.filtrosForm.get("idCategoria").valueChanges.subscribe((x) => {
+      console.log(x);
+      this.buscarTipoProducto(x);
+    });
   }
 
   ngAfterViewInit() {
@@ -163,15 +192,14 @@ export class ReservasComponent implements OnInit {
           let filterData = this.filtrosForm.value;
           delete filterData.nombreEmpleado;
           delete filterData.nombreCliente;
-          const id = filterData.idEmpleado;
-          delete filterData.idEmpleado;
+          delete filterData.idCategoria;
 
           const params = {
             cantidad: this.paginator.pageSize,
             inicio: this.retornaInicio(),
             orderBy: this.sort.active,
             orderDir: this.sort.direction,
-
+            like: "S",
             ejemplo: JSON.stringify(deleteEmptyData(filterData)),
           };
           return this.service.listarRecurso(params);
@@ -194,18 +222,79 @@ export class ReservasComponent implements OnInit {
   }
 
   openDialog(): void {
-    this.router.navigate(["reserva/agregar"]);
+    this.router.navigate(["/ficha/agregar"]);
   }
 
   acciones(data, e) {
-    const id = "idTipoProducto";
+    const id = "idFichaClinica";
     const actionType = e.target.getAttribute("data-action-type");
     switch (actionType) {
-      case "cancelar":
+      case "activar":
         break;
-      case "modificar":
+      case "eliminar":
+        swal
+          .fire({
+            title: "Está seguro que desea eliminar el registro?",
+            text: "Esta acción no se podrá revertir!",
+            icon: "warning",
+            showCancelButton: true,
+            customClass: {
+              confirmButton: "btn btn-success",
+              cancelButton: "btn btn-danger",
+            },
+            confirmButtonText: "Eliminar",
+            buttonsStyling: false,
+          })
+          .then((result) => {
+            if (result.value) {
+              this.service.eliminarRecurso(data[id]).subscribe((res) => {
+                swal
+                  .fire({
+                    title: "Éxito!",
+                    text: "El registro fue eliminado correctamente.",
+                    icon: "success",
+                    customClass: {
+                      confirmButton: "btn btn-success",
+                    },
+                    buttonsStyling: false,
+                  })
+                  .then(() => {
+                    this.limpiar();
+                  });
+              });
+            }
+          });
         break;
-      case "nuevaFicha":
+      case "editar":
+        const dialogRef = this.dialog.open(FichaEditComponent, {
+          width: "",
+          data: {
+            title: "Modificar Categoria",
+            label: "Se modifica categoria: " + data[id],
+            entity: data,
+          },
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result) {
+            this.service.modificarRecurso(result, data[id]).subscribe((res) => {
+              console.log(res);
+              swal
+                .fire({
+                  title: "Éxito!",
+                  text: "El registro fue creado correctamente.",
+                  icon: "success",
+                  customClass: {
+                    confirmButton: "btn btn-success",
+                  },
+                  buttonsStyling: false,
+                })
+                .then(() => {
+                  this.limpiar();
+                });
+            });
+          }
+        });
         break;
       default:
         break;
@@ -214,12 +303,6 @@ export class ReservasComponent implements OnInit {
   mostrarCampo(row, columna) {
     if (columna.relacion) {
       if (row[columna.label] == null) return "";
-      if (Array.isArray(columna.columnaRelacion)) {
-        return this.multipleColumnas(
-          row[columna.label],
-          columna.columnaRelacion
-        );
-      }
       return row[columna.label][columna.columnaRelacion];
     } else {
       if (typeof columna.estados != "undefined") {
@@ -230,14 +313,6 @@ export class ReservasComponent implements OnInit {
       }
       return row[columna.label];
     }
-  }
-  multipleColumnas(valor: any, listaCol: any[]) {
-    let valorRetorno = "";
-    for (let index = 0; index < listaCol.length; index++) {
-      const property = listaCol[index];
-      valorRetorno += valor[property] + " ";
-    }
-    return valorRetorno;
   }
   limpiar() {
     this.filtrosForm.reset();
@@ -298,8 +373,36 @@ export class ReservasComponent implements OnInit {
         });
         break;
 
+      case "idTipoProducto":
+        dialogRef = this.dialog.open(BuscadorTipoProductoComponent, {
+          data: {
+            title: "Buscador de Tipo Productos",
+          },
+        });
+
+        dialogRef.afterClosed().subscribe((result: any) => {
+          console.log(result);
+          if (result) {
+            this.f.descripcion.setValue(result.descripcion);
+            this.f.idTipoProducto.setValue(result.idTipoProducto);
+          }
+        });
+        break;
+
       default:
         break;
     }
+  }
+  buscarTipoProducto(idCategoria) {
+    console.log("buscar");
+
+    this.tipoProductoService
+      .listarRecurso({
+        ejemplo: JSON.stringify({ idCategoria }),
+      })
+      .subscribe((res: any) => {
+        this.f.idTipoProducto.setValue(null);
+        this.listaTipoProducto = res.lista;
+      });
   }
 }

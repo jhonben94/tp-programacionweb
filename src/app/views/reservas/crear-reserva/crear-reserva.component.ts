@@ -5,6 +5,7 @@ import {
   CANTIDAD_PAG_LIST,
   deleteEmptyData,
   formatearFecha,
+  formatearFechaFiltros,
   formatearHora,
 } from "src/app/utlis";
 import { BuscadorClienteComponent } from "../../buscadores/buscador-cliente/buscador-cliente.component";
@@ -13,6 +14,8 @@ import { merge, of } from "rxjs";
 import { startWith, switchMap, catchError, map } from "rxjs/operators";
 import { ReservasService } from "src/app/services/reservas.service";
 declare const $: any;
+import swal from "sweetalert2";
+
 @Component({
   selector: "app-crear-reserva",
   templateUrl: "./crear-reserva.component.html",
@@ -86,7 +89,7 @@ export class CrearReservaComponent implements OnInit {
     private reserva: ReservasService
   ) {
     this.filtrosForm = this.fb.group({
-      fecha: ["", Validators.required],
+      fechaCadena: [""],
       idEmpleado: [""],
       nombreEmpleado: ["", Validators.required],
       disponible: [""],
@@ -120,7 +123,6 @@ export class CrearReservaComponent implements OnInit {
         });
 
         dialogRef.afterClosed().subscribe((result: any) => {
-          console.log(result);
           if (result) {
             this.f.nombreEmpleado.setValue(
               result.nombre + " " + result.apellido
@@ -140,7 +142,6 @@ export class CrearReservaComponent implements OnInit {
         });
 
         dialogRef.afterClosed().subscribe((result: any) => {
-          console.log(result);
           if (result) {
             this.fc.nombreCliente.setValue(
               result.nombre + " " + result.apellido
@@ -164,7 +165,9 @@ export class CrearReservaComponent implements OnInit {
     return this.formCliente.controls;
   }
   buscar() {
-    let data = deleteEmptyData(this.filtrosForm.value);
+    let data = deleteEmptyData(
+      JSON.parse(JSON.stringify(this.filtrosForm.value))
+    );
     const id = data.idEmpleado;
     delete data.idEmpleado;
     delete data.nombreEmpleado;
@@ -213,14 +216,10 @@ export class CrearReservaComponent implements OnInit {
     }
   }
   validarForms() {
-    console.log(this.formCliente.valid);
-    console.log(this.filtrosForm.valid);
-    console.log(this.selectedRow);
-
     return !(
       this.formCliente.valid &&
       this.filtrosForm.valid &&
-      !this.selectedRow
+      this.selectedRow
     );
   }
 
@@ -249,6 +248,63 @@ export class CrearReservaComponent implements OnInit {
           "</div>" +
           '<a href="{3}" target="{4}" data-notify="url"></a>' +
           "</div>",
+      }
+    );
+  }
+
+  confirmar() {
+    let data = this.filtrosForm.value;
+    console.log(this.filtrosForm.value);
+
+    delete data.nombreEmpleado;
+    delete data.disponible;
+    const idEmp = data.idEmpleado;
+    data.fechaCadena = formatearFechaFiltros(data.fechaCadena);
+    data.horaInicioCadena = this.selectedRow.horaInicioCadena;
+    data.horaFinCadena = this.selectedRow.horaFinCadena;
+    const clientDate = this.formCliente.value;
+
+    data.idCliente = { idPersona: clientDate.idCliente };
+    data.idEmpleado = { idPersona: idEmp };
+    data.observacion = clientDate.observacion;
+
+    deleteEmptyData(data);
+
+    this.reserva.agregarRecurso(data).subscribe(
+      (res) => {
+        swal
+          .fire({
+            title: "Éxito!",
+            text: "El registro fue creado correctamente.",
+            icon: "success",
+            customClass: {
+              confirmButton: "btn btn-success",
+            },
+            buttonsStyling: false,
+          })
+          .then(() => {
+            this.filtrosForm.reset();
+            this.formCliente.reste();
+            this.selectedRow = null;
+          });
+      },
+      (err) => {
+        swal
+          .fire({
+            title: "Error!",
+            text: "Error al guardar el registro.",
+            icon: "error",
+            customClass: {
+              confirmButton: "btn btn-info",
+            },
+            buttonsStyling: false,
+          })
+          .then(() => {
+            this.filtrosForm.reset();
+            this.formCliente.reset();
+            this.selectedRow = null;
+            this.data = [];
+          });
       }
     );
   }

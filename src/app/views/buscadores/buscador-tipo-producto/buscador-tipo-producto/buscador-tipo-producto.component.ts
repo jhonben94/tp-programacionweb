@@ -7,9 +7,9 @@ import {
   CANTIDAD_PAG_MODAL_DEFAULT,
   CANTIDAD_PAG_MODAL_LIST,
   deleteEmptyData,
-} from "../../../utlis";
+} from "../../../../utlis";
 import { startWith, switchMap, catchError, map } from "rxjs/operators";
-import { PersonaService } from "src/app/services";
+import { CategoriaService, PersonaService, TipoProductoService } from "src/app/services";
 import {
   MatDialog,
   MatDialogRef,
@@ -18,12 +18,14 @@ import {
 import swal from "sweetalert2";
 import { Router } from "@angular/router";
 import { DialogModel } from "src/app/models";
+
 @Component({
-  selector: "app-buscador-cliente",
-  templateUrl: "./buscador-cliente.component.html",
-  styleUrls: ["./buscador-cliente.component.css"],
+  selector: 'app-buscador-tipo-producto',
+  templateUrl: './buscador-tipo-producto.component.html',
+  styleUrls: ['./buscador-tipo-producto.component.css']
 })
-export class BuscadorClienteComponent implements OnInit {
+export class BuscadorTipoProductoComponent implements OnInit {
+
   selectedRow: any;
 
   /**
@@ -62,15 +64,10 @@ export class BuscadorClienteComponent implements OnInit {
    * @description Definicion de las columnas a ser visualizadas
    */
   displayedColumns: string[] = [
-    "idPersona",
-    "nombre",
-    "apellido",
-    "email",
-    "telefono",
-    "ruc",
-    "cedula",
-    "tipoPersona",
-    "fechaNacimiento",
+    "idTipoProducto",
+    "descripcion",
+    "idCategoria",
+    "accion",
   ];
 
   opcionPagina = CANTIDAD_PAG_MODAL_LIST;
@@ -80,56 +77,21 @@ export class BuscadorClienteComponent implements OnInit {
    */
   listaColumnas: any = [
     {
-      matDef: "idPersona",
-      label: "idPersona",
-      descripcion: "PERSONA",
+      matDef: "idTipoProducto",
+      label: "idTipoProducto",
+      descripcion: "TIPO PROD.",
     },
     {
-      matDef: "nombre",
-      label: "nombre",
-      descripcion: "NOMBRE",
-    },
-
-    {
-      matDef: "apellido",
-      label: "apellido",
-      descripcion: "APELLIDO",
+      matDef: "descripcion",
+      label: "descripcion",
+      descripcion: "DESCRICIÓN",
     },
     {
-      matDef: "telefono",
-      label: "telefono",
-      descripcion: "TELÉFONO",
-    },
-
-    {
-      matDef: "email",
-      label: "email",
-      descripcion: "CORREO",
-    },
-    {
-      matDef: "telefono",
-      label: "telefono",
-      descripcion: "TELÉFONO",
-    },
-    {
-      matDef: "ruc",
-      label: "ruc",
-      descripcion: "RUC",
-    },
-    {
-      matDef: "cedula",
-      label: "cedula",
-      descripcion: "CÉDULA",
-    },
-    {
-      matDef: "tipoPersona",
-      label: "tipoPersona",
-      descripcion: "TIPO PERSONA",
-    },
-    {
-      matDef: "fechaNacimiento",
-      label: "fechaNacimiento",
-      descripcion: "FECHA NAC.",
+      matDef: "idCategoria",
+      label: "idCategoria",
+      descripcion: "CATEGORÍA",
+      relacion: true,
+      columnaRelacion: "descripcion",
     },
   ];
   /**
@@ -137,32 +99,34 @@ export class BuscadorClienteComponent implements OnInit {
    * @description Lista que contiene los valores para la grilla
    */
   data: any[] = [];
+  /**
+   * @type {Array}
+   * @description Lista que contiene los de las categorias
+   */
+  categorias: any[] = [];
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   constructor(
     private fb: FormBuilder,
-    private service: PersonaService,
+    private service: TipoProductoService,
+    private categoriaService: CategoriaService,
     public dialog: MatDialog,
     private router: Router,
-    public dialogRef: MatDialogRef<BuscadorClienteComponent>,
+    public dialogRef: MatDialogRef<BuscadorTipoProductoComponent>,
     @Inject(MAT_DIALOG_DATA) public dataModal: any
   ) {
     this.filtrosForm = this.fb.group({
       descripcion: [""],
-      nombre: [""],
-      apellido: [""],
-      email: [""],
-      telefono: [""],
-      ruc: [""],
-      cedula: [""],
-      tipoPersona: [""],
-      fechaNacimiento: [""],
+      idCategoria: [""],
     });
   }
 
   ngOnInit(): void {
     this.paginator.pageSize = CANTIDAD_PAG_MODAL_DEFAULT;
+    this.categoriaService.listarRecurso({}).subscribe((res: any) => {
+      this.categorias = res.lista;
+    });
   }
 
   ngAfterViewInit() {
@@ -180,9 +144,9 @@ export class BuscadorClienteComponent implements OnInit {
       .pipe(
         startWith({}),
         switchMap(() => {
-          this.isLoadingResults = true;
           let filterData = this.filtrosForm.value;
-          filterData.soloUsuariosDelSistema = false;
+          filterData.soloUsuariosDelSistema = true;
+          this.isLoadingResults = true;
           const params = {
             cantidad: this.paginator.pageSize,
             inicio: this.retornaInicio(),
@@ -211,7 +175,7 @@ export class BuscadorClienteComponent implements OnInit {
   }
 
   agregar(): void {
-    this.router.navigate(["persona/agregar"]);
+    this.router.navigate(["tipo-persona/agregar"]);
   }
 
   acciones(data, e) {
@@ -255,7 +219,7 @@ export class BuscadorClienteComponent implements OnInit {
           });
         break;
       case "editar":
-        this.router.navigate(["persona/modificar", data[id]]);
+        this.router.navigate(["tipo-persona/modificar", data[id]]);
         break;
       default:
         break;

@@ -51,7 +51,7 @@ export const WEEKDAYS = [
   { codigo: 6, valor: "SABADO" },
 ];
 export const obtenerDia = (id) => {
-  return WEEKDAYS.find((item) => (item.codigo = id)).valor;
+  return WEEKDAYS.find((item) => item.codigo == id).valor;
 };
 
 export const CANTIDAD_PAG_MODAL_DEFAULT = 5;
@@ -65,3 +65,17 @@ export const formatearHora = (hora) => {
   m = checkZero(m);
   return h + ":" + m;
 };
+
+export function formatearFechaFiltros(date) {
+  console.log(date.getMonth() + 1);
+
+  var day = date.getDate() + "";
+  var month = date.getMonth() + 1 + "";
+  var year = date.getFullYear() + "";
+
+  day = checkZero(day);
+  month = checkZero(month);
+  year = checkZero(year);
+
+  return year + "" + month + "" + day + "";
+}

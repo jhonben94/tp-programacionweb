@@ -1,14 +1,17 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { CategoriaComponent } from "./categoria/categoria.component";
+import { FichaComponent } from "./ficha/ficha.component";
 import { PersonaEditComponent } from "./persona/persona-edit/persona-edit.component";
 import { PersonaComponent } from "./persona/persona.component";
 import { PresentacionProductoComponent } from "./presentacion-producto/presentacion-producto.component";
 import { CrearReservaComponent } from "./reservas/crear-reserva/crear-reserva.component";
 import { ReservasComponent } from "./reservas/reservas.component";
 import { TipoProductoComponent } from "./tipo-producto/tipo-producto.component";
-import {PersonaHorarioAgendaComponent} from './persona-horario-agenda/persona-horario-agenda.component';
-import {HorarioExcepcionComponent} from './horario-excepcion/horario-excepcion.component';
+import { PersonaHorarioAgendaComponent } from "./persona-horario-agenda/persona-horario-agenda.component";
+import { HorarioExcepcionComponent } from "./horario-excepcion/horario-excepcion.component";
+import { PersonaHorarioAgendaEditComponent } from "./persona-horario-agenda/persona-horario-agenda-edit/persona-horario-agenda-edit.component";
+import { FichaEditComponent } from "./ficha/ficha-edit/ficha-edit.component";
 
 export const routes: Routes = [
   {
@@ -31,8 +34,24 @@ export const routes: Routes = [
         component: PersonaHorarioAgendaComponent,
       },
       {
+        path: "persona-horario-agenda/agregar",
+        component: PersonaHorarioAgendaEditComponent,
+      },
+      {
+        path: "persona-horario-agenda/modificar/:id",
+        component: PersonaHorarioAgendaEditComponent,
+      },
+      {
         path: "horario-excepcion",
         component: HorarioExcepcionComponent,
+      },
+      {
+        path: "horario-excepcion/agregar",
+        component: PersonaHorarioAgendaEditComponent,
+      },
+      {
+        path: "horario-excepcion/modificar/:id",
+        component: PersonaHorarioAgendaEditComponent,
       },
       {
         path: "persona",
@@ -45,6 +64,18 @@ export const routes: Routes = [
       {
         path: "persona/modificar/:id",
         component: PersonaEditComponent,
+      },
+      {
+        path: "ficha",
+        component: FichaComponent,
+      },
+      {
+        path: "ficha/agregar",
+        component: FichaEditComponent,
+      },
+      {
+        path: "ficha/modificar/:id",
+        component: FichaEditComponent,
       },
       {
         path: "reserva",

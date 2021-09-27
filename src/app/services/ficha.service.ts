@@ -5,9 +5,9 @@ import { environment } from "src/environments/environment";
 @Injectable({
   providedIn: 'root'
 })
-export class HorarioExcepcionService {
-  recurosBaseURL: string = environment.URL_BASE + "/horarioExcepcion/";
-  headers = new HttpHeaders({"Content-Type": "application/json"});
+export class FichaService {
+  recurosBaseURL: string = environment.URL_BASE + "/fichaClinica/";
+  headers = new HttpHeaders({ "Content-Type": "application/json" });
 
   constructor(private http: HttpClient) {}
   activarRecurso(id) {

@@ -18,21 +18,14 @@
                   matInput
                   [matDatepicker]="picker"
                   placeholder="FECHA "
-                  formControlName="fecha"
+                  formControlName="fechaCadena"
                   (click)="picker.open()"
-                  required
                 />
                 <mat-datepicker-toggle
                   matSuffix
                   [for]="picker"
                 ></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
-
-                <mat-error
-                  *ngIf="filtrosForm.get('fecha').hasError('required')"
-                >
-                  Fecha requerida.
-                </mat-error>
               </mat-form-field>
 
               <mat-form-field class="example-full-width">
@@ -176,6 +169,7 @@
                 mat-raised-button
                 type="button"
                 class="btn btn-primary"
+                (click)="confirmar()"
               >
                 Guardar Reservar
               </button>

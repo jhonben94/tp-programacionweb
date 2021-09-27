@@ -92,7 +92,7 @@ export class PresentacionProductoComponent implements OnInit {
       label: "idProducto",
       descripcion: "PRODUCTO",
       relacion: true,
-      columnaRelacion: "descripcion",
+      columnaRelacion: "descripcionGeneral",
     },
     {
       matDef: "flgServicio",
