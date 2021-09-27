@@ -56,18 +56,36 @@
                 formControlName="flagEsHabilitar"
                 >Habilitado</mat-checkbox
               >
+              <mat-form-field class="example-full-width">
+                <input
+                        type="text"
+                        matInput
+                        placeholder="HORA DE CIERRE"
+                        formControlName="horaCierreCadena"
+                        required
+                />
+              </mat-form-field>
+              <mat-form-field class="example-full-width">
+                <input
+                        type="text"
+                        matInput
+                        placeholder="INTERVALO MINUTOS"
+                        formControlName="intervaloMinutos"
+                        required
+                />
+              </mat-form-field>
             </div>
-            <!--                            <div class="col-6">-->
-            <!--                                <mat-form-field class="example-full-width">-->
-            <!--                                    <input-->
-            <!--                                            type="text"-->
-            <!--                                            matInput-->
-            <!--                                            placeholder="HABILITADO"-->
-            <!--                                            formControlName="flagEsHabilitar"-->
-            <!--                                            required-->
-            <!--                                    />-->
-            <!--                                </mat-form-field>-->
-            <!--                        </div>-->
+                                        <div class="col-6">
+                                          <mat-form-field class="example-full-width">
+                                            <input
+                                                    type="text"
+                                                    matInput
+                                                    placeholder="HORA DE APERTURA"
+                                                    formControlName="horaAperturaCadena"
+                                                    required
+                                            />
+                                          </mat-form-field>
+                                    </div>
           </div>
         </div>
         <div class="card-footer">

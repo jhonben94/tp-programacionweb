@@ -13,6 +13,7 @@ import { HorarioExcepcionComponent } from "./horario-excepcion/horario-excepcion
 import { PersonaHorarioAgendaEditComponent } from "./persona-horario-agenda/persona-horario-agenda-edit/persona-horario-agenda-edit.component";
 import { FichaEditComponent } from "./ficha/ficha-edit/ficha-edit.component";
 import { HorarioExcepcionEditComponent } from "./horario-excepcion/horario-excepcion-edit/horario-excepcion-edit.component";
+import {HorarioExcepcionFisioComponent} from './horario-excepcion/horario-excepcion-fisio/horario-excepcion-fisio.component';
 
 export const routes: Routes = [
   {
@@ -49,6 +50,10 @@ export const routes: Routes = [
       {
         path: "horario-excepcion/agregar",
         component: HorarioExcepcionEditComponent,
+      },
+      {
+        path: "horario-excepcion/agregar-fisio",
+        component: HorarioExcepcionFisioComponent,
       },
       {
         path: "horario-excepcion/modificar/:id",

@@ -26,6 +26,7 @@ import { HorarioExcepcionEditComponent } from './horario-excepcion/horario-excep
 import { FichaComponent } from './ficha/ficha.component';
 import { FichaEditComponent } from './ficha/ficha-edit/ficha-edit.component';
 import { BuscadorTipoProductoComponent } from './buscadores/buscador-tipo-producto/buscador-tipo-producto/buscador-tipo-producto.component';
+import { HorarioExcepcionFisioComponent } from './horario-excepcion/horario-excepcion-fisio/horario-excepcion-fisio.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { BuscadorTipoProductoComponent } from './buscadores/buscador-tipo-produc
     HorarioExcepcionComponent,
     HorarioExcepcionEditComponent,
     BuscadorTipoProductoComponent,
+    HorarioExcepcionFisioComponent,
   ],
   imports: [
     CommonModule,
