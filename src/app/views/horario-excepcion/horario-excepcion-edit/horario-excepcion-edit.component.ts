@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, Router} from '@angular/router';
-import {WEEKDAYS} from '../../../utlis';
+import {deleteEmptyData, formatearFechaFiltros, WEEKDAYS} from '../../../utlis';
 import swal from 'sweetalert2';
 import {BuscadorEmpleadoComponent} from '../../buscadores/buscador-empleado/buscador-empleado.component';
 import {HorarioExcepcionService} from '../../../services';
@@ -17,6 +17,9 @@ export class HorarioExcepcionEditComponent implements OnInit {
   id: any;
   titulo: any;
   listaSemana: any[];
+  filtrosForm = this.fb.group({
+    descripcion: [""],
+  });
   constructor(
       public dialog: MatDialog,
       private fb: FormBuilder,
@@ -25,16 +28,15 @@ export class HorarioExcepcionEditComponent implements OnInit {
       private router: Router
   ) {
     this.form = this.fb.group({
-      dia: ["", Validators.required],
-      horaAperturaCadena: ["", Validators.required],
-      horaCierreCadena: ["", Validators.required],
-      intervaloMinutos: ["", Validators.required],
+      fechaCadena: ["", Validators.required],
       flagEsHabilitar: ["", Validators.required],
       idEmpleado: ["", Validators.required],
-      nombreEmpleado: ["", Validators.required],
+      nombreEmpleado: [""],
     });
   }
-
+  get f() {
+    return this.form.controls;
+  }
   ngOnInit(): void {
     this.listaSemana = WEEKDAYS;
     this.id = this.route.snapshot.paramMap.get("id");
@@ -44,11 +46,10 @@ export class HorarioExcepcionEditComponent implements OnInit {
       // settear en el formulario.
       this.service.obtenerRecurso(this.id).subscribe((res: any) => {
         console.log(res);
-
-        this.f.dia.setValue(res.dia);
-        this.f.horaCierreCadena.setValue(res.horaCierreCadena);
-        this.f.horaAperturaCadena.setValue(res.horaAperturaCadena);
-        this.f.intervaloMinutos.setValue(res.intervaloMinutos);
+        let filterData = this.filtrosForm.value;
+        filterData.fechaCadena = formatearFechaFiltros(filterData.fechaCadena);
+        this.f.fechaCadena.setValue(res.fechaCadena);
+        this.f.flagEsHabilitar.setValue( res.flagEsHabilitar=='S'? true:false );
         this.f.idEmpleado.setValue(res.idEmpleado.idPersona);
         this.f.nombreEmpleado.setValue(res.idEmpleado.nombreCompleto);
       });
@@ -149,11 +150,6 @@ export class HorarioExcepcionEditComponent implements OnInit {
         break;
     }
   }
-
-  get f() {
-    return this.form.controls;
-  }
-
   cancelar() {
     this.router.navigate(["/horario-excepcion"]);
   }

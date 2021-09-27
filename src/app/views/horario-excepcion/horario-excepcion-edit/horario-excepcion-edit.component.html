@@ -15,32 +15,27 @@
                     <div class="row">
                         <div class="col-6">
                             <mat-form-field>
-                                <mat-label>DÍA</mat-label>
-                                <mat-select formControlName="dia">
-                                    <mat-option
-                                            *ngFor="let item of listaSemana"
-                                            [value]="item.codigo"
-                                    >
-                                        {{ item.valor }}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                            <mat-form-field class="example-full-width">
                                 <input
-                                        type="text"
                                         matInput
-                                        placeholder="HORA DE APERTURA"
-                                        formControlName="horaAperturaCadena"
+                                        [matDatepicker]="picker"
+                                        placeholder="FECHA "
+                                        formControlName="fechaCadena"
                                         required
+                                        (click)="picker.open()"
                                 />
+                                <mat-datepicker-toggle
+                                        matSuffix
+                                        [for]="picker"
+                                ></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
                             </mat-form-field>
-
                             <mat-form-field class="example-full-width">
                                 <input
                                         type="search"
                                         matInput
                                         placeholder="EMPLEADO"
                                         formControlName="nombreEmpleado"
+                                        required
                                         (click)="buscadores('empleado')"
                                 />
                                 <button
@@ -54,36 +49,24 @@
                                 </button>
                             </mat-form-field>
                         </div>
-                        <div class="col-6">
-                            <mat-form-field class="example-full-width">
-                                <input
-                                        type="text"
-                                        matInput
-                                        placeholder="INTERVALO MINUTOS"
-                                        formControlName="intervaloMinutos"
-                                        required
-                                />
-                            </mat-form-field>
-                            <mat-form-field class="example-full-width">
-                                <input
-                                        type="text"
-                                        matInput
-                                        placeholder="HORA DE CIERRE"
-                                        formControlName="horaCierreCadena"
-                                        required
-                                />
-                            </mat-form-field>
+<!--                        <div class="col-6">-->
+                            <div class="col-6">
+                                <mat-checkbox class="example-margin" formControlName="disponible"
+                                              required
+                                >Habilitado</mat-checkbox
+                                >
+                            </div>
 <!--                            <div class="col-6">-->
-                                <mat-form-field class="example-full-width">
-                                    <input
-                                            type="text"
-                                            matInput
-                                            placeholder="HABILITADO"
-                                            formControlName="flagEsHabilitar"
-                                            required
-                                    />
-                                </mat-form-field>
-                        </div>
+<!--                                <mat-form-field class="example-full-width">-->
+<!--                                    <input-->
+<!--                                            type="text"-->
+<!--                                            matInput-->
+<!--                                            placeholder="HABILITADO"-->
+<!--                                            formControlName="flagEsHabilitar"-->
+<!--                                            required-->
+<!--                                    />-->
+<!--                                </mat-form-field>-->
+<!--                        </div>-->
                     </div>
                 </div>
                 <div class="card-footer">

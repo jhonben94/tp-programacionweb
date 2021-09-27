@@ -170,6 +170,7 @@ buscar() {
                 this.isLoadingResults = true;
                 let filterData = this.filtrosForm.value;
                 delete filterData.nombreEmpleado;
+                filterData.fechaCadena = formatearFechaFiltros(filterData.fechaCadena);
                 const params = {
                     cantidad: this.paginator.pageSize,
                     inicio: this.retornaInicio(),
