@@ -12,11 +12,12 @@ import { BuscadorEmpleadoComponent } from "../../buscadores/buscador-empleado/bu
 import { HorarioExcepcionService } from "../../../services";
 
 @Component({
-  selector: "app-horario-excepcion-edit",
-  templateUrl: "./horario-excepcion-edit.component.html",
-  styleUrls: ["./horario-excepcion-edit.component.css"],
+  selector: 'app-horario-excepcion-fisio',
+  templateUrl: './horario-excepcion-fisio.component.html',
+  styleUrls: ['./horario-excepcion-fisio.component.css']
 })
-export class HorarioExcepcionEditComponent implements OnInit {
+export class HorarioExcepcionFisioComponent implements OnInit {
+
   form: FormGroup;
   id: any;
   titulo: any;
@@ -25,20 +26,17 @@ export class HorarioExcepcionEditComponent implements OnInit {
     descripcion: [""],
   });
   constructor(
-    public dialog: MatDialog,
-    private fb: FormBuilder,
-    private service: HorarioExcepcionService,
-    private route: ActivatedRoute,
-    private router: Router
+      public dialog: MatDialog,
+      private fb: FormBuilder,
+      private service: HorarioExcepcionService,
+      private route: ActivatedRoute,
+      private router: Router
   ) {
     this.form = this.fb.group({
       fechaCadena: ["", Validators.required],
       flagEsHabilitar: [""],
       idEmpleado: ["", Validators.required],
       nombreEmpleado: [""],
-      horaAperturaCadena: ["", Validators.required],
-      horaCierreCadena: ["", Validators.required],
-      intervaloMinutos: ["", Validators.required],
     });
   }
   get f() {
@@ -48,7 +46,7 @@ export class HorarioExcepcionEditComponent implements OnInit {
     this.listaSemana = WEEKDAYS;
     this.id = this.route.snapshot.paramMap.get("id");
     if (this.id) {
-      this.titulo = "MODIFICAR HORARIO EXCEPCIONAL";
+      this.titulo = "MODIFICAR REGISTRO DE FISIOTERAPUETA";
       //obtener datos de la persona.
       // settear en el formulario.
       this.service.obtenerRecurso(this.id).subscribe((res: any) => {
@@ -57,16 +55,13 @@ export class HorarioExcepcionEditComponent implements OnInit {
         filterData.fechaCadena = formatearFechaFiltros(filterData.fechaCadena);
         this.f.fechaCadena.setValue(res.fechaCadena);
         this.f.flagEsHabilitar.setValue(
-          res.flagEsHabilitar == "S" ? true : false
+            res.flagEsHabilitar == "S" ? true : false
         );
         this.f.idEmpleado.setValue(res.idEmpleado.idPersona);
         this.f.nombreEmpleado.setValue(res.idEmpleado.nombreCompleto);
-        this.f.horaCierreCadena.setValue(res.horaCierreCadena);
-        this.f.horaAperturaCadena.setValue(res.horaAperturaCadena);
-        this.f.intervaloMinutos.setValue(res.intervaloMinutos);
       });
     } else {
-      this.titulo = "AGREGAR HORARIO EXCEPCIONAL";
+      this.titulo = "AGREGAR NUEVO REGISTRO DE FISIOTERAPEUTA";
       this.f.flagEsHabilitar.setValue(true);
     }
   }
@@ -84,61 +79,61 @@ export class HorarioExcepcionEditComponent implements OnInit {
 
     if (this.id) {
       this.service.modificarRecurso(valorForm, this.id).subscribe(
-        (res) => {
-          swal
-            .fire({
-              title: "Éxito!",
-              text: "El registro fue modificado correctamente.",
-              icon: "success",
+          (res) => {
+            swal
+                .fire({
+                  title: "Éxito!",
+                  text: "El registro fue modificado correctamente.",
+                  icon: "success",
+                  customClass: {
+                    confirmButton: "btn btn-success",
+                  },
+                  buttonsStyling: false,
+                })
+                .then(() => {
+                  this.form.reset();
+                });
+          },
+          (err) => {
+            swal.fire({
+              title: "Error!",
+              text: "Error al modificar el registro.",
+              icon: "error",
               customClass: {
-                confirmButton: "btn btn-success",
+                confirmButton: "btn btn-info",
               },
               buttonsStyling: false,
-            })
-            .then(() => {
-              this.form.reset();
             });
-        },
-        (err) => {
-          swal.fire({
-            title: "Error!",
-            text: "Error al modificar el registro.",
-            icon: "error",
-            customClass: {
-              confirmButton: "btn btn-info",
-            },
-            buttonsStyling: false,
-          });
-        }
+          }
       );
     } else {
       this.service.agregarRecurso(valorForm).subscribe(
-        (res) => {
-          swal
-            .fire({
-              title: "Éxito!",
-              text: "El registro fue creado correctamente.",
-              icon: "success",
+          (res) => {
+            swal
+                .fire({
+                  title: "Éxito!",
+                  text: "El registro fue creado correctamente.",
+                  icon: "success",
+                  customClass: {
+                    confirmButton: "btn btn-success",
+                  },
+                  buttonsStyling: false,
+                })
+                .then(() => {
+                  this.form.reset();
+                });
+          },
+          (err) => {
+            swal.fire({
+              title: "Error!",
+              text: "Error al guardar el registro.",
+              icon: "error",
               customClass: {
-                confirmButton: "btn btn-success",
+                confirmButton: "btn btn-info",
               },
               buttonsStyling: false,
-            })
-            .then(() => {
-              this.form.reset();
             });
-        },
-        (err) => {
-          swal.fire({
-            title: "Error!",
-            text: "Error al guardar el registro.",
-            icon: "error",
-            customClass: {
-              confirmButton: "btn btn-info",
-            },
-            buttonsStyling: false,
-          });
-        }
+          }
       );
     }
   }
@@ -155,7 +150,7 @@ export class HorarioExcepcionEditComponent implements OnInit {
         dialogRef.afterClosed().subscribe((result: any) => {
           if (result) {
             this.f.nombreEmpleado.setValue(
-              result.nombre + " " + result.apellido
+                result.nombre + " " + result.apellido
             );
             this.f.idEmpleado.setValue(result.idPersona);
           } else {
