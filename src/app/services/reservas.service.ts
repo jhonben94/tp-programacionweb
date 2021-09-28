@@ -42,9 +42,9 @@ export class ReservasService {
   }
 
   listarReserva(id, filtros) {
-    /* return this.http.get(this.obtenerReservaURL + id + "/agenda", {
+    return this.http.get(this.obtenerReservaURL + id + "/agenda", {
       params: filtros,
-    }); */
+    });
 
     const url = "http://localhost:4200/assets/data.json";
     return this.http.get(url);

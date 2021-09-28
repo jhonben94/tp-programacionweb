@@ -197,6 +197,32 @@
           [pageSizeOptions]="opcionPagina"
           showFirstLastButtons
         ></mat-paginator>
+
+        <div class="card-footer">
+          <div class="row">
+            <div class="form-group"></div>
+          </div>
+          <div class="row">
+            <div class="form-group">
+              <button
+                mat-raised-button
+                type="button"
+                class="btn btn-primary"
+                (click)="buscar()"
+              >
+                EXCEL <i class="material-icons">format_list_bulleted</i>
+              </button>
+              <button
+                mat-raised-button
+                type="button"
+                class="btn btn-default btn-fill btn-wd"
+                (click)="downloadPdf()"
+              >
+                PDF <i class="material-icons">picture_as_pdf</i>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

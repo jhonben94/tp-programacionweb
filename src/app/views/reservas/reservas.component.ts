@@ -9,7 +9,11 @@ import {
   deleteEmptyData,
 } from "../../utlis";
 import { startWith, switchMap, catchError, map } from "rxjs/operators";
-import { CategoriaService, TipoProductoService } from "src/app/services";
+import {
+  CategoriaService,
+  TipoProductoService,
+  ExportService,
+} from "src/app/services";
 import { MatDialog } from "@angular/material/dialog";
 import swal from "sweetalert2";
 import { ReservasService } from "src/app/services/reservas.service";
@@ -18,6 +22,8 @@ import { PersonaComponent } from "../persona/persona.component";
 import { BuscadorClienteComponent } from "../buscadores/buscador-cliente/buscador-cliente.component";
 import { CrearReservaComponent } from "./crear-reserva/crear-reserva.component";
 import { Router } from "@angular/router";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 @Component({
   selector: "app-reservas",
   templateUrl: "./reservas.component.html",
@@ -127,7 +133,8 @@ export class ReservasComponent implements OnInit {
     private fb: FormBuilder,
     private service: ReservasService,
     public dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private exportarService: ExportService
   ) {
     this.filtrosForm = this.fb.group({
       fechaDesde: [""],
@@ -301,5 +308,9 @@ export class ReservasComponent implements OnInit {
       default:
         break;
     }
+  }
+
+  downloadPdf() {
+    this.exportarService.downloadPdf(this.data, this.listaColumnas);
   }
 }
