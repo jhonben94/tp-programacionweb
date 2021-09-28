@@ -9,10 +9,13 @@ import {
   deleteEmptyData,
 } from "../../utlis";
 import { startWith, switchMap, catchError, map } from "rxjs/operators";
-import { CategoriaService } from "src/app/services";
+import { ServicioService } from "src/app/services";
 import { MatDialog } from "@angular/material/dialog";
 import swal from "sweetalert2";
+import { Router } from "@angular/router";
 import { PersonaEditComponent } from "../persona/persona-edit/persona-edit.component";
+import { BuscadorEmpleadoComponent } from "../buscadores/buscador-empleado/buscador-empleado.component";
+import { BuscadorClienteComponent } from "../buscadores/buscador-cliente/buscador-cliente.component";
 
 
 @Component({
@@ -56,7 +59,15 @@ export class ServicioComponent implements OnInit {
    * @type {Array}
    * @description Definicion de las columnas a ser visualizadas
    */
-  displayedColumns: string[] = ["idCategoria", "descripcion", "accion"];
+  displayedColumns: string[] = [
+    "idServicio",
+    "observacion",
+    "fechaHoraCadenaFormateada",
+    "presupuesto",
+    "idFichaClinica",
+    "idEmpleado",
+    "accion",
+  ];
 
   opcionPagina = CANTIDAD_PAG_LIST;
   /**
@@ -65,14 +76,38 @@ export class ServicioComponent implements OnInit {
    */
   listaColumnas: any = [
     {
-      matDef: "idCategoria",
-      label: "idCategoria",
-      descripcion: "CATEGORÍA",
+      matDef: "idServicio",
+      label: "idServicio",
+      descripcion: "SERVICIO",
     },
     {
-      matDef: "descripcion",
-      label: "descripcion",
-      descripcion: "DESCRICIÓN",
+      matDef: "observacion",
+      label: "observacion",
+      descripcion: "OBSERVACION",
+    },
+    {
+      matDef: "fechaHoraCadenaFormateada",
+      label: "fechaHoraCadenaFormateada",
+      descripcion: "FECHA",
+    },
+    {
+      matDef: "presupuesto",
+      label: "presupuesto",
+      descripcion: "PRESUPUESTO",
+    },
+    {
+      matDef: "idFichaClinica",
+      label: "idFichaClinica",
+      descripcion: "FICHA CLINICA",
+      relacion: true,
+      columnaRelacion: ["motivoConsulta"],
+    },
+    {
+      matDef: "idEmpleado",
+      label: "idEmpleado",
+      relacion: true,
+      descripcion: "EMPLEADO",
+      columnaRelacion: ["nombre"],
     },
   ];
   /**
@@ -85,11 +120,20 @@ export class ServicioComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private service: CategoriaService,
+    private service: ServicioService,
+    private router: Router,
     public dialog: MatDialog
   ) {
     this.filtrosForm = this.fb.group({
-      descripcion: [""],
+      observacion: [""],
+      idFichaClinica: [""],
+      idEmpleado: [""],
+      idCliente: [""],
+      motivoConsulta: [""],
+      nombreEmpleado: [""],
+      nombreCliente: [""],
+      fechaDesde: [""],
+      fechaHasta: [""],
     });
   }
 
@@ -113,13 +157,18 @@ export class ServicioComponent implements OnInit {
         startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
+
+          let filterData = this.filtrosForm.value;
+          delete filterData.nombreEmpleado;
+          delete filterData.nombreCliente;
+
           const params = {
             cantidad: this.paginator.pageSize,
             inicio: this.retornaInicio(),
             orderBy: this.sort.active,
             orderDir: this.sort.direction,
             like: "S",
-            ejemplo: JSON.stringify(deleteEmptyData(this.filtrosForm.value)),
+            ejemplo: JSON.stringify(deleteEmptyData(filterData)),
           };
           return this.service.listarRecurso(params);
         }),
@@ -141,43 +190,11 @@ export class ServicioComponent implements OnInit {
   }
 
   openDialog(): void {
-    const dialogRef = this.dialog.open(PersonaEditComponent, {
-      width: "",
-      data: {
-        title: "Agregar Categoria",
-        label: "Se agrega categoria correspondiente.",
-        entity: {},
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result: any) => {
-      console.log(result);
-
-      if (result) {
-        result.flagVisible = "S";
-        this.service.agregarRecurso(result).subscribe((res) => {
-          console.log(res);
-
-          swal
-            .fire({
-              title: "Éxito!",
-              text: "El registro fue creado correctamente.",
-              icon: "success",
-              customClass: {
-                confirmButton: "btn btn-success",
-              },
-              buttonsStyling: false,
-            })
-            .then(() => {
-              this.limpiar();
-            });
-        });
-      }
-    });
+    this.router.navigate(["/servicio/agregar"]);
   }
 
   acciones(data, e) {
-    const id = "idCategoria";
+    const id = "idServicio";
     const actionType = e.target.getAttribute("data-action-type");
     switch (actionType) {
       case "activar":
@@ -251,6 +268,7 @@ export class ServicioComponent implements OnInit {
         break;
     }
   }
+
   mostrarCampo(row, columna) {
     if (columna.relacion) {
       if (row[columna.label] == null) return "";
@@ -265,10 +283,12 @@ export class ServicioComponent implements OnInit {
       return row[columna.label];
     }
   }
+
   limpiar() {
     this.filtrosForm.reset();
     this.buscar();
   }
+
   retornaInicio() {
     const cantidad = this.paginator.pageSize;
     let inicio: any = this.paginator.pageIndex;
@@ -280,5 +300,53 @@ export class ServicioComponent implements OnInit {
       );
     }
     return inicio;
+  }
+
+  buscadores(buscador) {
+    let dialogRef = null;
+    switch (buscador) {
+      case "empleado":
+        dialogRef = this.dialog.open(BuscadorEmpleadoComponent, {
+          data: {
+            title: "Buscador de Empleados",
+          },
+        });
+
+        dialogRef.afterClosed().subscribe((result: any) => {
+          console.log(result);
+          if (result) {
+            this.f.nombreEmpleado.setValue(
+              result.nombre + " " + result.apellido
+            );
+            this.f.idEmpleado.setValue(result.idPersona);
+          } else {
+            this.f.nombreEmpleado.setValue(null);
+          }
+        });
+        break;
+
+      case "cliente":
+        dialogRef = this.dialog.open(BuscadorClienteComponent, {
+          data: {
+            title: "Buscador de Clientes",
+          },
+        });
+
+        dialogRef.afterClosed().subscribe((result: any) => {
+          console.log(result);
+          if (result) {
+            this.f.nombreCliente.setValue(
+              result.nombre + " " + result.apellido
+            );
+            this.f.idCliente.setValue(result.idPersona);
+          } else {
+            this.f.nombreEmpleado.setValue(null);
+          }
+        });
+        break;
+
+      default:
+        break;
+    }
   }
 }

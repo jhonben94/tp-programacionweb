@@ -27,6 +27,7 @@ import { FichaComponent } from './ficha/ficha.component';
 import { FichaEditComponent } from './ficha/ficha-edit/ficha-edit.component';
 import { BuscadorTipoProductoComponent } from './buscadores/buscador-tipo-producto/buscador-tipo-producto/buscador-tipo-producto.component';
 import { ServicioComponent } from './servicio/servicio.component';
+import { ServicioEditComponent } from './servicio/servicio-edit/servicio-edit.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { ServicioComponent } from './servicio/servicio.component';
     HorarioExcepcionEditComponent,
     BuscadorTipoProductoComponent,
     ServicioComponent,
+    ServicioEditComponent,
   ],
   imports: [
     CommonModule,

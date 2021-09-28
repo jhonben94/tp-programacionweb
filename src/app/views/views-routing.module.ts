@@ -13,6 +13,7 @@ import { HorarioExcepcionComponent } from "./horario-excepcion/horario-excepcion
 import { PersonaHorarioAgendaEditComponent } from "./persona-horario-agenda/persona-horario-agenda-edit/persona-horario-agenda-edit.component";
 import { FichaEditComponent } from "./ficha/ficha-edit/ficha-edit.component";
 import { ServicioComponent } from "./servicio/servicio.component";
+import { ServicioEditComponent } from "./servicio/servicio-edit/servicio-edit.component";
 
 export const routes: Routes = [
   {
@@ -81,6 +82,10 @@ export const routes: Routes = [
       {
         path: "servicio",
         component: ServicioComponent,
+      },
+      {
+        path: "servicio/agregar",
+        component: ServicioEditComponent,
       },
     ],
   },
