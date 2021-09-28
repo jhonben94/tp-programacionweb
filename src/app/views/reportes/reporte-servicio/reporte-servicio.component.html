@@ -1,1 +1,185 @@
-<p>reporte-servicio works!</p>
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header card-header-primary card-header-icon">
+        <div class="card-icon">
+          <i class="material-icons">summarize</i>
+        </div>
+        <h4 class="card-title"><strong>Reporte de Servicios</strong></h4>
+      </div>
+
+      <mat-accordion>
+        <mat-expansion-panel [(expanded)]="expanded" class="mat-elevation-z0">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <strong>Filtros de Búsqueda</strong>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <form
+            [formGroup]="filtrosForm"
+            (keydown.enter)="$event.preventDefault()"
+          >
+            <div class="card-body">
+              <div class="row">
+                <div class="col-6">
+                  <mat-form-field>
+                    <input
+                      matInput
+                      [matDatepicker]="picker"
+                      placeholder="FECHA DESDE"
+                      formControlName="fechaDesde"
+                      (click)="picker.open()"
+                      required
+                    />
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="picker"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <input
+                      matInput
+                      [matDatepicker]="picker2"
+                      placeholder="FECHA HASTA"
+                      formControlName="fechaHasta"
+                      (click)="picker2.open()"
+                      required
+                    />
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="picker2"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                  </mat-form-field>
+                </div>
+                <div class="col-6">
+                  <mat-form-field class="example-full-width">
+                    <input
+                      type="search"
+                      matInput
+                      placeholder="EMPLEADO"
+                      formControlName="nombreEmpleado"
+                      (click)="buscadores('empleado')"
+                    />
+                    <button
+                      mat-button
+                      matSuffix
+                      mat-stroked-button
+                      aria-label="search"
+                      (click)="buscadores('empleado')"
+                    >
+                      <mat-icon>search</mat-icon>
+                    </button>
+                  </mat-form-field>
+                  <mat-form-field class="example-full-width">
+                    <input
+                      type="search"
+                      matInput
+                      placeholder="CLIENTE"
+                      formControlName="nombreCliente"
+                      (click)="buscadores('cliente')"
+                    />
+                    <button
+                      mat-button
+                      matSuffix
+                      mat-stroked-button
+                      aria-label="search"
+                      (click)="buscadores('cliente')"
+                    >
+                      <mat-icon>search</mat-icon>
+                    </button>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="row">
+                <div class="form-group"></div>
+              </div>
+              <div class="row">
+                <div class="form-group">
+                  <button
+                    mat-raised-button
+                    type="button"
+                    class="btn btn-primary"
+                    (click)="buscar()"
+                    [disabled]="!filtrosForm.valid"
+                  >
+                    Buscar
+                  </button>
+                  <button
+                    mat-raised-button
+                    type="button"
+                    class="btn btn-default btn-fill btn-wd"
+                    (click)="limpiar()"
+                  >
+                    Limpiar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </mat-expansion-panel>
+      </mat-accordion>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <div class="form-group">
+              <button
+                mat-raised-button
+                type="button"
+                class="btn btn-primary"
+                (click)="downloadExcel()"
+                [disabled]="data.length == 0"
+              >
+                EXCEL <i class="material-icons">format_list_bulleted</i>
+              </button>
+              <button
+                mat-raised-button
+                type="button"
+                class="btn btn-default btn-fill btn-wd"
+                (click)="downloadPdf()"
+                [disabled]="data.length == 0"
+              >
+                PDF <i class="material-icons">picture_as_pdf</i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <table
+          mat-table
+          [dataSource]="data"
+          class="example-table"
+          matSort
+          matSortActive="idServicio"
+          matSortDisableClear
+          matSortDirection="desc"
+        >
+          <!-- Number Column -->
+          <ng-container matColumnDef="number">
+            <th mat-header-cell *matHeaderCellDef>#</th>
+            <td mat-cell *matCellDef="let row; let i = index">{{ i + 1 }}</td>
+          </ng-container>
+          <!-- definicion dinamica de las columnas -->
+          <ng-container
+            *ngFor="let columna of listaColumnas"
+            [matColumnDef]="columna.matDef"
+          >
+            <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>
+              <strong>{{ columna.descripcion }}</strong>
+            </th>
+            <td mat-cell *matCellDef="let row">
+              {{ mostrarCampo(row, columna) }}
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -79,6 +79,17 @@ export const ROUTES: RouteInfo[] = [
     icontype: "event_available",
   },
   {
+    path: "/reporte",
+    title: "Reportes",
+    type: "sub",
+    icontype: "apps",
+    collapse: "components",
+    children: [
+      { path: "servicio", title: "Servicios", ab: "B" },
+      { path: "servicio-detalle", title: "Servicios Detalle", ab: "GS" },
+    ],
+  },
+  /* {
     path: "/dashboard",
     title: "Dashboard",
     type: "link",
@@ -169,7 +180,7 @@ export const ROUTES: RouteInfo[] = [
       { path: "lock", title: "Lock Screen Page", ab: "LSP" },
       { path: "user", title: "User Page", ab: "UP" },
     ],
-  },
+  }, */
 ];
 @Component({
   selector: "app-sidebar-cmp",

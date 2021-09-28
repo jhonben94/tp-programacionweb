@@ -7,6 +7,7 @@ import {
   CANTIDAD_PAG_DEFAULT,
   CANTIDAD_PAG_LIST,
   deleteEmptyData,
+  formatearFechaFiltros,
 } from "../../utlis";
 import { startWith, switchMap, catchError, map } from "rxjs/operators";
 import { ServicioService } from "src/app/services";
@@ -17,17 +18,16 @@ import { PersonaEditComponent } from "../persona/persona-edit/persona-edit.compo
 import { BuscadorEmpleadoComponent } from "../buscadores/buscador-empleado/buscador-empleado.component";
 import { BuscadorClienteComponent } from "../buscadores/buscador-cliente/buscador-cliente.component";
 
-
 @Component({
-  selector: 'app-servicio',
-  templateUrl: './servicio.component.html',
-  styleUrls: ['./servicio.component.css']
+  selector: "app-servicio",
+  templateUrl: "./servicio.component.html",
+  styleUrls: ["./servicio.component.css"],
 })
 export class ServicioComponent implements OnInit {
   /**
-     * @type {boolean}
-     * @description Flag que maneja el Expansion Panel de filtros
-     */
+   * @type {boolean}
+   * @description Flag que maneja el Expansion Panel de filtros
+   */
   expanded = true;
 
   /**
@@ -62,7 +62,7 @@ export class ServicioComponent implements OnInit {
   displayedColumns: string[] = [
     "idServicio",
     "observacion",
-    "fechaHoraCadenaFormateada",
+    "fechaHora",
     "presupuesto",
     "idFichaClinica",
     "idEmpleado",
@@ -86,8 +86,8 @@ export class ServicioComponent implements OnInit {
       descripcion: "OBSERVACION",
     },
     {
-      matDef: "fechaHoraCadenaFormateada",
-      label: "fechaHoraCadenaFormateada",
+      matDef: "fechaHora",
+      label: "fechaHora",
       descripcion: "FECHA",
     },
     {
@@ -107,7 +107,7 @@ export class ServicioComponent implements OnInit {
       label: "idEmpleado",
       relacion: true,
       descripcion: "EMPLEADO",
-      columnaRelacion: ["nombre"],
+      columnaRelacion: ["nombre", "apellido"],
     },
   ];
   /**
@@ -158,10 +158,18 @@ export class ServicioComponent implements OnInit {
         switchMap(() => {
           this.isLoadingResults = true;
 
-          let filterData = this.filtrosForm.value;
+          let filterData = Object.assign({}, this.filtrosForm.value);
           delete filterData.nombreEmpleado;
           delete filterData.nombreCliente;
 
+          filterData.fechaDesdeCadena = filterData.fechaDesde
+            ? formatearFechaFiltros(filterData.fechaDesde)
+            : "";
+          filterData.fechaHastaCadena = filterData.fechahasta
+            ? formatearFechaFiltros(filterData.fechahasta)
+            : "";
+          delete filterData.fechaDesde;
+          delete filterData.fechahasta;
           const params = {
             cantidad: this.paginator.pageSize,
             inicio: this.retornaInicio(),
@@ -272,6 +280,12 @@ export class ServicioComponent implements OnInit {
   mostrarCampo(row, columna) {
     if (columna.relacion) {
       if (row[columna.label] == null) return "";
+      if (Array.isArray(columna.columnaRelacion)) {
+        return this.multipleColumnas(
+          row[columna.label],
+          columna.columnaRelacion
+        );
+      }
       return row[columna.label][columna.columnaRelacion];
     } else {
       if (typeof columna.estados != "undefined") {
@@ -283,7 +297,14 @@ export class ServicioComponent implements OnInit {
       return row[columna.label];
     }
   }
-
+  multipleColumnas(valor: any, listaCol: any[]) {
+    let valorRetorno = "";
+    for (let index = 0; index < listaCol.length; index++) {
+      const property = listaCol[index];
+      valorRetorno += valor[property] + " ";
+    }
+    return valorRetorno;
+  }
   limpiar() {
     this.filtrosForm.reset();
     this.buscar();

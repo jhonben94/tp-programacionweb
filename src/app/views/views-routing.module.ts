@@ -15,6 +15,8 @@ import { FichaEditComponent } from "./ficha/ficha-edit/ficha-edit.component";
 import { ServicioComponent } from "./servicio/servicio.component";
 import { ServicioEditComponent } from "./servicio/servicio-edit/servicio-edit.component";
 import { HorarioExcepcionEditComponent } from "./horario-excepcion/horario-excepcion-edit/horario-excepcion-edit.component";
+import { ReporteServicioComponent } from "./reportes/reporte-servicio/reporte-servicio.component";
+import { ReporteServicioDetalleComponent } from "./reportes/reporte-servicio-detalle/reporte-servicio-detalle.component";
 
 export const routes: Routes = [
   {
@@ -93,8 +95,12 @@ export const routes: Routes = [
         component: ServicioComponent,
       },
       {
-        path: "servicio/agregar",
-        component: ServicioEditComponent,
+        path: "reporte/servicio",
+        component: ReporteServicioComponent,
+      },
+      {
+        path: "reporte/servicio-detalle",
+        component: ReporteServicioDetalleComponent,
       },
     ],
   },

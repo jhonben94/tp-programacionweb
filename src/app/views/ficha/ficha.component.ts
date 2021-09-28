@@ -111,14 +111,14 @@ export class FichaComponent implements OnInit {
       label: "idCliente",
       descripcion: "CLIENTE",
       relacion: true,
-      columnaRelacion: ["nombre"],
+      columnaRelacion: ["nombre", "apellido"],
     },
     {
       matDef: "idEmpleado",
       label: "idEmpleado",
       relacion: true,
       descripcion: "EMPLEADO",
-      columnaRelacion: ["nombre"],
+      columnaRelacion: ["nombre", "apellido"],
     },
     {
       matDef: "idTipoProducto",

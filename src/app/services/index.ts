@@ -1,9 +1,7 @@
 export { ServicioService } from "./servicio.service";
 
-export {PersonaHorarioAgendaService} from "./persona-horario-agenda.service";
-export { ExportService } from "./export.service";
-
 export { PersonaHorarioAgendaService } from "./persona-horario-agenda.service";
+export { ExportService } from "./export.service";
 
 export { FichaService } from "./ficha.service";
 
