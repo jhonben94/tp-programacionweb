@@ -311,6 +311,9 @@ export class ReservasComponent implements OnInit {
   }
 
   downloadPdf() {
-    this.exportarService.downloadPdf(this.data, this.listaColumnas);
+    this.exportarService.exportPdf(this.data, this.listaColumnas);
+  }
+  downloadExcel() {
+    this.exportarService.exportExcel(this.data, "excel");
   }
 }

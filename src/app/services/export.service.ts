@@ -2,13 +2,21 @@ import { Injectable } from "@angular/core";
 
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+
+import * as FileSaver from "file-saver";
+import * as XLSX from "xlsx";
+
+const EXCEL_TYPE =
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+const EXCEL_EXTENSION = ".xlsx";
+
 @Injectable({
   providedIn: "root",
 })
 export class ExportService {
   constructor() {}
 
-  downloadPdf(dataParam: any[], listaColumnas: any[]) {
+  public exportPdf(dataParam: any[], listaColumnas: any[]) {
     let prepare = [];
     dataParam.forEach((e) => {
       var tempObj = [];
@@ -39,7 +47,7 @@ export class ExportService {
     doc.save("reservas" + date.getMilliseconds() + ".pdf");
   }
 
-  mostrarCampo(row, columna) {
+  public mostrarCampo(row, columna) {
     if (columna.relacion) {
       if (row[columna.label] == null) return "";
       if (Array.isArray(columna.columnaRelacion)) {
@@ -59,12 +67,37 @@ export class ExportService {
       return row[columna.label];
     }
   }
-  multipleColumnas(valor: any, listaCol: any[]) {
+  public multipleColumnas(valor: any, listaCol: any[]) {
     let valorRetorno = "";
     for (let index = 0; index < listaCol.length; index++) {
       const property = listaCol[index];
       valorRetorno += valor[property] + " ";
     }
     return valorRetorno;
+  }
+
+  public exportExcel(json: any[], excelFileName: string): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(json);
+    console.log("worksheet", worksheet);
+    const workbook: XLSX.WorkBook = {
+      Sheets: { data: worksheet },
+      SheetNames: ["data"],
+    };
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    //const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
+    this.saveAsExcelFile(excelBuffer, excelFileName);
+  }
+
+  private saveAsExcelFile(buffer: any, fileName: string): void {
+    const data: Blob = new Blob([buffer], {
+      type: EXCEL_TYPE,
+    });
+    FileSaver.saveAs(
+      data,
+      fileName + "_export_" + new Date().getTime() + EXCEL_EXTENSION
+    );
   }
 }
