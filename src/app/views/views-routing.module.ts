@@ -14,6 +14,7 @@ import { PersonaHorarioAgendaEditComponent } from "./persona-horario-agenda/pers
 import { FichaEditComponent } from "./ficha/ficha-edit/ficha-edit.component";
 import { ServicioComponent } from "./servicio/servicio.component";
 import { ServicioEditComponent } from "./servicio/servicio-edit/servicio-edit.component";
+import { HorarioExcepcionEditComponent } from "./horario-excepcion/horario-excepcion-edit/horario-excepcion-edit.component";
 
 export const routes: Routes = [
   {
@@ -46,6 +47,14 @@ export const routes: Routes = [
       {
         path: "horario-excepcion",
         component: HorarioExcepcionComponent,
+      },
+      {
+        path: "horario-excepcion/agregar",
+        component: HorarioExcepcionEditComponent,
+      },
+      {
+        path: "horario-excepcion/modificar/:id",
+        component: HorarioExcepcionEditComponent,
       },
       {
         path: "persona",

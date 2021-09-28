@@ -21,7 +21,10 @@
             "allowedCommonJsDependencies": [
               "nouislider",
               "chartist",
-              "rxjs/add/operator/filter"
+              "rxjs/add/operator/filter",
+              "jspdf-autotable",
+              "raf",
+              "core-js/modules/es.promise.js"
             ],
             "assets": [
               "src/favicon.ico",

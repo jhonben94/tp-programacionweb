@@ -1,1 +1,100 @@
-<p>horario-excepcion-edit works!</p>
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header card-header-primary card-header-icon">
+        <div class="card-icon">
+          <i class="material-icons">event_available</i>
+        </div>
+        <h4 class="card-title">
+          <strong>{{ titulo }}</strong>
+        </h4>
+      </div>
+
+      <form [formGroup]="form" (keydown.enter)="$event.preventDefault()">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-6">
+              <mat-form-field>
+                <input
+                  matInput
+                  [matDatepicker]="picker"
+                  placeholder="FECHA "
+                  formControlName="fechaCadena"
+                  required
+                  (click)="picker.open()"
+                />
+                <mat-datepicker-toggle
+                  matSuffix
+                  [for]="picker"
+                ></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+              <mat-form-field class="example-full-width">
+                <input
+                  type="search"
+                  matInput
+                  placeholder="EMPLEADO"
+                  formControlName="nombreEmpleado"
+                  required
+                  (click)="buscadores('empleado')"
+                />
+                <button
+                  mat-button
+                  matSuffix
+                  mat-stroked-button
+                  aria-label="search"
+                  (click)="buscadores('empleado')"
+                >
+                  <mat-icon>search</mat-icon>
+                </button>
+              </mat-form-field>
+            </div>
+            <!--                        <div class="col-6">-->
+            <div class="col-6">
+              <mat-checkbox
+                class="example-margin"
+                formControlName="flagEsHabilitar"
+                >Habilitado</mat-checkbox
+              >
+            </div>
+            <!--                            <div class="col-6">-->
+            <!--                                <mat-form-field class="example-full-width">-->
+            <!--                                    <input-->
+            <!--                                            type="text"-->
+            <!--                                            matInput-->
+            <!--                                            placeholder="HABILITADO"-->
+            <!--                                            formControlName="flagEsHabilitar"-->
+            <!--                                            required-->
+            <!--                                    />-->
+            <!--                                </mat-form-field>-->
+            <!--                        </div>-->
+          </div>
+        </div>
+        <div class="card-footer">
+          <!--     [disabled]="!form.valid" -->
+          <div class="row">
+            <div class="form-group">
+              <button
+                mat-raised-button
+                type="button"
+                class="btn btn-primary"
+                (click)="confirmar()"
+              >
+                Confirmar
+              </button>
+              <button
+                mat-raised-button
+                type="button"
+                class="btn btn-default btn-fill btn-wd"
+                (click)="cancelar()"
+                [disabled]="!form.valid"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

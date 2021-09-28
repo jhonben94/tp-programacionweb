@@ -26,6 +26,8 @@ import { HorarioExcepcionEditComponent } from './horario-excepcion/horario-excep
 import { FichaComponent } from './ficha/ficha.component';
 import { FichaEditComponent } from './ficha/ficha-edit/ficha-edit.component';
 import { BuscadorTipoProductoComponent } from './buscadores/buscador-tipo-producto/buscador-tipo-producto/buscador-tipo-producto.component';
+import { ReporteServicioComponent } from './reportes/reporte-servicio/reporte-servicio.component';
+import { ReporteServicioDetalleComponent } from './reportes/reporte-servicio-detalle/reporte-servicio-detalle.component';
 import { ServicioComponent } from './servicio/servicio.component';
 import { ServicioEditComponent } from './servicio/servicio-edit/servicio-edit.component';
 
@@ -50,6 +52,8 @@ import { ServicioEditComponent } from './servicio/servicio-edit/servicio-edit.co
     HorarioExcepcionComponent,
     HorarioExcepcionEditComponent,
     BuscadorTipoProductoComponent,
+    ReporteServicioComponent,
+    ReporteServicioDetalleComponent,
     ServicioComponent,
     ServicioEditComponent,
   ],
