@@ -12,6 +12,8 @@ import { PersonaHorarioAgendaComponent } from "./persona-horario-agenda/persona-
 import { HorarioExcepcionComponent } from "./horario-excepcion/horario-excepcion.component";
 import { PersonaHorarioAgendaEditComponent } from "./persona-horario-agenda/persona-horario-agenda-edit/persona-horario-agenda-edit.component";
 import { FichaEditComponent } from "./ficha/ficha-edit/ficha-edit.component";
+import { ServicioComponent } from "./servicio/servicio.component";
+import { ServicioEditComponent } from "./servicio/servicio-edit/servicio-edit.component";
 import { HorarioExcepcionEditComponent } from "./horario-excepcion/horario-excepcion-edit/horario-excepcion-edit.component";
 import {HorarioExcepcionFisioComponent} from './horario-excepcion/horario-excepcion-fisio/horario-excepcion-fisio.component';
 
@@ -90,6 +92,14 @@ export const routes: Routes = [
       {
         path: "reserva/agregar",
         component: CrearReservaComponent,
+      },
+      {
+        path: "servicio",
+        component: ServicioComponent,
+      },
+      {
+        path: "servicio/agregar",
+        component: ServicioEditComponent,
       },
     ],
   },

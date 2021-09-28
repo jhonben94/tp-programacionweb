@@ -28,6 +28,8 @@ import { BuscadorTipoProductoComponent } from './buscadores/buscador-tipo-produc
 import { HorarioExcepcionFisioComponent } from './horario-excepcion/horario-excepcion-fisio/horario-excepcion-fisio.component';
 import { ReporteServicioComponent } from './reportes/reporte-servicio/reporte-servicio.component';
 import { ReporteServicioDetalleComponent } from './reportes/reporte-servicio-detalle/reporte-servicio-detalle.component';
+import { ServicioComponent } from './servicio/servicio.component';
+import { ServicioEditComponent } from './servicio/servicio-edit/servicio-edit.component';
 
 
 @NgModule({
@@ -54,6 +56,8 @@ import { ReporteServicioDetalleComponent } from './reportes/reporte-servicio-det
     HorarioExcepcionFisioComponent,
     ReporteServicioComponent,
     ReporteServicioDetalleComponent,
+    ServicioComponent,
+    ServicioEditComponent,
   ],
   imports: [
     CommonModule,
