@@ -18,6 +18,8 @@ import { PersonaComponent } from "../persona/persona.component";
 import { BuscadorClienteComponent } from "../buscadores/buscador-cliente/buscador-cliente.component";
 import { CrearReservaComponent } from "./crear-reserva/crear-reserva.component";
 import { Router } from "@angular/router";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 @Component({
   selector: "app-reservas",
   templateUrl: "./reservas.component.html",
@@ -301,5 +303,36 @@ export class ReservasComponent implements OnInit {
       default:
         break;
     }
+  }
+
+  downloadPdf() {
+    let prepare = [];
+    this.data.forEach((e) => {
+      var tempObj = [];
+      this.listaColumnas.forEach((element) => {
+        tempObj.push(this.mostrarCampo(e, element));
+      });
+
+      prepare.push(tempObj);
+    });
+
+    let columnas = [];
+    this.listaColumnas.forEach((item) => {
+      columnas.push(item.descripcion);
+    });
+
+    const doc = new jsPDF("l", "mm", "a4");
+    console.table(columnas, prepare);
+
+    const head = [columnas];
+    const data = prepare;
+
+    autoTable(doc, {
+      head: head,
+      body: data,
+      didDrawCell: (data) => {},
+    });
+    const date = new Date();
+    doc.save("reservas" + date.getMilliseconds() + ".pdf");
   }
 }
