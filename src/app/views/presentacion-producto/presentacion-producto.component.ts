@@ -14,6 +14,7 @@ import { MatDialog } from "@angular/material/dialog";
 import swal from "sweetalert2";
 import { PresentacionProductoEditComponent } from "./presentacion-producto-edit/presentacion-producto-edit.component";
 import { PresentacionProductoService } from "src/app/services/presentacion-producto.service";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-presentacion-producto",
@@ -120,7 +121,8 @@ export class PresentacionProductoComponent implements OnInit {
     private fb: FormBuilder,
     private service: PresentacionProductoService,
     public dialog: MatDialog,
-    private _tipoProductoService: TipoProductoService
+    private _tipoProductoService: TipoProductoService,
+    private router: Router
   ) {
     this.filtrosForm = this.fb.group({
       nombre: [""],
@@ -153,7 +155,12 @@ export class PresentacionProductoComponent implements OnInit {
           this.isLoadingResults = true;
           let filtros: any = this.filtrosForm.value;
 
+          const idTipoProducto = filtros.idTipoProducto;
           delete filtros.idTipoProducto;
+          if (idTipoProducto != "")
+            filtros.idProducto = {
+              idTipoProducto,
+            };
           const params = {
             cantidad: this.paginator.pageSize,
             inicio: this.retornaInicio(),
