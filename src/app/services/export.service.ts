@@ -16,12 +16,15 @@ const EXCEL_EXTENSION = ".xlsx";
 export class ExportService {
   constructor() {}
 
-  public exportPdf(dataParam: any[], listaColumnas: any[]) {
+  public exportPdf(dataParam: any[], listaColumnas: any[], reporte = "N") {
     let prepare = [];
     dataParam.forEach((e) => {
       var tempObj = [];
       listaColumnas.forEach((element) => {
-        tempObj.push(this.mostrarCampo(e, element));
+        if (reporte == "N") tempObj.push(this.mostrarCampo(e, element));
+        else {
+          tempObj.push(this.mostrarCampoReporteDetalle(e, element));
+        }
       });
 
       prepare.push(tempObj);
@@ -89,6 +92,40 @@ export class ExportService {
     });
     //const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
     this.saveAsExcelFile(excelBuffer, excelFileName);
+  }
+
+  mostrarCampoReporteDetalle(row, columna) {
+    if (columna.relacion) {
+      if (row[columna.label] == null) return "";
+      if (Array.isArray(columna.columnaRelacion)) {
+        return this.multipleColumnas(
+          row[columna.label],
+          columna.columnaRelacion
+        );
+      }
+
+      return row[columna.label][columna.columnaRelacion];
+    } else {
+      if (columna.label == "fechaHora") {
+        return row.idServicio.fechaHora;
+      }
+      if (columna.label == "cliente") {
+        return row.idServicio.idFichaClinica.idCliente.nombreCompleto;
+      }
+      if (columna.label == "idEmpleado") {
+        return row.idServicio.idServicio.idEmpleado.nombreCompleto;
+      }
+      if (columna.label == "totalDetalle") {
+        return row.idServicio.presupuesto * row.cantidad;
+      }
+      if (typeof columna.estados != "undefined") {
+        const label = row[columna.label]
+          ? columna.estados[0]
+          : columna.estados[1];
+        return label;
+      }
+      return row[columna.label];
+    }
   }
 
   private saveAsExcelFile(buffer: any, fileName: string): void {

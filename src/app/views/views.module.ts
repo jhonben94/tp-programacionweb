@@ -28,6 +28,8 @@ import { FichaEditComponent } from './ficha/ficha-edit/ficha-edit.component';
 import { BuscadorTipoProductoComponent } from './buscadores/buscador-tipo-producto/buscador-tipo-producto/buscador-tipo-producto.component';
 import { ReporteServicioComponent } from './reportes/reporte-servicio/reporte-servicio.component';
 import { ReporteServicioDetalleComponent } from './reportes/reporte-servicio-detalle/reporte-servicio-detalle.component';
+import { ServicioComponent } from './servicio/servicio.component';
+import { ServicioEditComponent } from './servicio/servicio-edit/servicio-edit.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +54,8 @@ import { ReporteServicioDetalleComponent } from './reportes/reporte-servicio-det
     BuscadorTipoProductoComponent,
     ReporteServicioComponent,
     ReporteServicioDetalleComponent,
+    ServicioComponent,
+    ServicioEditComponent,
   ],
   imports: [
     CommonModule,

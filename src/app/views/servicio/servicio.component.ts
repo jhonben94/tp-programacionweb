@@ -7,27 +7,23 @@ import {
   CANTIDAD_PAG_DEFAULT,
   CANTIDAD_PAG_LIST,
   deleteEmptyData,
+  formatearFechaFiltros,
 } from "../../utlis";
 import { startWith, switchMap, catchError, map } from "rxjs/operators";
-import {
-  CategoriaService,
-  FichaService,
-  TipoProductoService,
-} from "src/app/services";
+import { ServicioService } from "src/app/services";
 import { MatDialog } from "@angular/material/dialog";
 import swal from "sweetalert2";
-import { FichaEditComponent } from "./ficha-edit/ficha-edit.component";
+import { Router } from "@angular/router";
+import { PersonaEditComponent } from "../persona/persona-edit/persona-edit.component";
 import { BuscadorEmpleadoComponent } from "../buscadores/buscador-empleado/buscador-empleado.component";
 import { BuscadorClienteComponent } from "../buscadores/buscador-cliente/buscador-cliente.component";
-import { Router } from "@angular/router";
-import { BuscadorTipoProductoComponent } from "../buscadores/buscador-tipo-producto/buscador-tipo-producto/buscador-tipo-producto.component";
 
 @Component({
-  selector: "app-ficha",
-  templateUrl: "./ficha.component.html",
-  styleUrls: ["./ficha.component.css"],
+  selector: "app-servicio",
+  templateUrl: "./servicio.component.html",
+  styleUrls: ["./servicio.component.css"],
 })
-export class FichaComponent implements OnInit {
+export class ServicioComponent implements OnInit {
   /**
    * @type {boolean}
    * @description Flag que maneja el Expansion Panel de filtros
@@ -64,14 +60,12 @@ export class FichaComponent implements OnInit {
    * @description Definicion de las columnas a ser visualizadas
    */
   displayedColumns: string[] = [
-    "idFichaClinica",
-    "motivoConsulta",
-    "diagnostico",
+    "idServicio",
     "observacion",
-    "fechaHoraCadenaFormateada",
+    "fechaHora",
+    "presupuesto",
+    "idFichaClinica",
     "idEmpleado",
-    "idCliente",
-    "idTipoProducto",
     "accion",
   ];
 
@@ -82,36 +76,31 @@ export class FichaComponent implements OnInit {
    */
   listaColumnas: any = [
     {
-      matDef: "idFichaClinica",
-      label: "idFichaClinica",
-      descripcion: "ID FICHA",
-    },
-    {
-      matDef: "motivoConsulta",
-      label: "motivoConsulta",
-      descripcion: "MOTIVO DE CONSULTA",
-    },
-    {
-      matDef: "diagnostico",
-      label: "diagnostico",
-      descripcion: "DIAGNOSTICO",
+      matDef: "idServicio",
+      label: "idServicio",
+      descripcion: "SERVICIO",
     },
     {
       matDef: "observacion",
       label: "observacion",
-      descripcion: "OBSERVACIÓN",
+      descripcion: "OBSERVACION",
     },
     {
-      matDef: "fechaHoraCadenaFormateada",
-      label: "fechaHoraCadenaFormateada",
+      matDef: "fechaHora",
+      label: "fechaHora",
       descripcion: "FECHA",
     },
     {
-      matDef: "idCliente",
-      label: "idCliente",
-      descripcion: "CLIENTE",
+      matDef: "presupuesto",
+      label: "presupuesto",
+      descripcion: "PRESUPUESTO",
+    },
+    {
+      matDef: "idFichaClinica",
+      label: "idFichaClinica",
+      descripcion: "FICHA CLINICA",
       relacion: true,
-      columnaRelacion: ["nombre", "apellido"],
+      columnaRelacion: ["motivoConsulta"],
     },
     {
       matDef: "idEmpleado",
@@ -119,13 +108,6 @@ export class FichaComponent implements OnInit {
       relacion: true,
       descripcion: "EMPLEADO",
       columnaRelacion: ["nombre", "apellido"],
-    },
-    {
-      matDef: "idTipoProducto",
-      label: "idTipoProducto",
-      descripcion: "TIPO PRODUCTO",
-      relacion: true,
-      columnaRelacion: ["descripcion"],
     },
   ];
   /**
@@ -135,41 +117,28 @@ export class FichaComponent implements OnInit {
   data: any[] = [];
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
-  listaCategoria: any[] = [];
-  listaTipoProducto: any[] = [];
+
   constructor(
     private fb: FormBuilder,
-    private service: FichaService,
-    public dialog: MatDialog,
+    private service: ServicioService,
     private router: Router,
-    private categoriaService: CategoriaService,
-    private tipoProductoService: TipoProductoService
+    public dialog: MatDialog
   ) {
     this.filtrosForm = this.fb.group({
-      motivoConsulta: [""],
-      diagnostico: [""],
       observacion: [""],
+      idFichaClinica: [""],
       idEmpleado: [""],
       idCliente: [""],
+      motivoConsulta: [""],
       nombreEmpleado: [""],
       nombreCliente: [""],
       fechaDesde: [""],
       fechaHasta: [""],
-      idCategoria: [""],
-      idTipoProducto: [""],
     });
   }
 
   ngOnInit(): void {
-    this.categoriaService.listarRecurso({}).subscribe((res: any) => {
-      this.listaCategoria = res.lista;
-    });
     this.paginator.pageSize = CANTIDAD_PAG_DEFAULT;
-
-    this.filtrosForm.get("idCategoria").valueChanges.subscribe((x) => {
-      console.log(x);
-      this.buscarTipoProducto(x);
-    });
   }
 
   ngAfterViewInit() {
@@ -189,11 +158,18 @@ export class FichaComponent implements OnInit {
         switchMap(() => {
           this.isLoadingResults = true;
 
-          let filterData = this.filtrosForm.value;
+          let filterData = Object.assign({}, this.filtrosForm.value);
           delete filterData.nombreEmpleado;
           delete filterData.nombreCliente;
-          delete filterData.idCategoria;
 
+          filterData.fechaDesdeCadena = filterData.fechaDesde
+            ? formatearFechaFiltros(filterData.fechaDesde)
+            : "";
+          filterData.fechaHastaCadena = filterData.fechahasta
+            ? formatearFechaFiltros(filterData.fechahasta)
+            : "";
+          delete filterData.fechaDesde;
+          delete filterData.fechahasta;
           const params = {
             cantidad: this.paginator.pageSize,
             inicio: this.retornaInicio(),
@@ -222,11 +198,11 @@ export class FichaComponent implements OnInit {
   }
 
   openDialog(): void {
-    this.router.navigate(["/ficha/agregar"]);
+    this.router.navigate(["/servicio/agregar"]);
   }
 
   acciones(data, e) {
-    const id = "idFichaClinica";
+    const id = "idServicio";
     const actionType = e.target.getAttribute("data-action-type");
     switch (actionType) {
       case "activar":
@@ -266,7 +242,7 @@ export class FichaComponent implements OnInit {
           });
         break;
       case "editar":
-        const dialogRef = this.dialog.open(FichaEditComponent, {
+        const dialogRef = this.dialog.open(PersonaEditComponent, {
           width: "",
           data: {
             title: "Modificar Categoria",
@@ -300,9 +276,16 @@ export class FichaComponent implements OnInit {
         break;
     }
   }
+
   mostrarCampo(row, columna) {
     if (columna.relacion) {
       if (row[columna.label] == null) return "";
+      if (Array.isArray(columna.columnaRelacion)) {
+        return this.multipleColumnas(
+          row[columna.label],
+          columna.columnaRelacion
+        );
+      }
       return row[columna.label][columna.columnaRelacion];
     } else {
       if (typeof columna.estados != "undefined") {
@@ -314,10 +297,19 @@ export class FichaComponent implements OnInit {
       return row[columna.label];
     }
   }
+  multipleColumnas(valor: any, listaCol: any[]) {
+    let valorRetorno = "";
+    for (let index = 0; index < listaCol.length; index++) {
+      const property = listaCol[index];
+      valorRetorno += valor[property] + " ";
+    }
+    return valorRetorno;
+  }
   limpiar() {
     this.filtrosForm.reset();
     this.buscar();
   }
+
   retornaInicio() {
     const cantidad = this.paginator.pageSize;
     let inicio: any = this.paginator.pageIndex;
@@ -330,6 +322,7 @@ export class FichaComponent implements OnInit {
     }
     return inicio;
   }
+
   buscadores(buscador) {
     let dialogRef = null;
     switch (buscador) {
@@ -373,36 +366,8 @@ export class FichaComponent implements OnInit {
         });
         break;
 
-      case "idTipoProducto":
-        dialogRef = this.dialog.open(BuscadorTipoProductoComponent, {
-          data: {
-            title: "Buscador de Tipo Productos",
-          },
-        });
-
-        dialogRef.afterClosed().subscribe((result: any) => {
-          console.log(result);
-          if (result) {
-            this.f.descripcion.setValue(result.descripcion);
-            this.f.idTipoProducto.setValue(result.idTipoProducto);
-          }
-        });
-        break;
-
       default:
         break;
     }
-  }
-  buscarTipoProducto(idCategoria) {
-    console.log("buscar");
-
-    this.tipoProductoService
-      .listarRecurso({
-        ejemplo: JSON.stringify({ idCategoria }),
-      })
-      .subscribe((res: any) => {
-        this.f.idTipoProducto.setValue(null);
-        this.listaTipoProducto = res.lista;
-      });
   }
 }
