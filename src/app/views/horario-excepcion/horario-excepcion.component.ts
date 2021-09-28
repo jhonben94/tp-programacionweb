@@ -209,8 +209,11 @@ export class HorarioExcepcionComponent implements OnInit {
   agregar(): void {
     this.router.navigate(["horario-excepcion/agregar"]);
   }
+  agregarfisio(): void {
+    this.router.navigate(["horario-excepcion/agregar-fisio"]);
+  }
   acciones(data, e) {
-    const id = "idPersonaHorarioAgenda";
+    const id = "idHorarioExcepcion";
     const actionType = e.target.getAttribute("data-action-type");
     switch (actionType) {
       case "activar":

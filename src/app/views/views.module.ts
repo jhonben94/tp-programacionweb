@@ -10,7 +10,6 @@ import { routes } from "./views-routing.module";
 import { CategoriaEditComponent } from "./categoria/categoria-edit/categoria-edit.component";
 import { TipoProductoComponent } from "./tipo-producto/tipo-producto.component";
 import { TipoProductoEditComponent } from "./tipo-producto/tipo-producto-edit/tipo-producto-edit.component";
-
 import { PresentacionProductoComponent } from "./presentacion-producto/presentacion-producto.component";
 import { PresentacionProductoEditComponent } from "./presentacion-producto/presentacion-producto-edit/presentacion-producto-edit.component";
 import { PersonaComponent } from "./persona/persona.component";
@@ -26,8 +25,10 @@ import { HorarioExcepcionEditComponent } from './horario-excepcion/horario-excep
 import { FichaComponent } from './ficha/ficha.component';
 import { FichaEditComponent } from './ficha/ficha-edit/ficha-edit.component';
 import { BuscadorTipoProductoComponent } from './buscadores/buscador-tipo-producto/buscador-tipo-producto/buscador-tipo-producto.component';
+import { HorarioExcepcionFisioComponent } from './horario-excepcion/horario-excepcion-fisio/horario-excepcion-fisio.component';
 import { ReporteServicioComponent } from './reportes/reporte-servicio/reporte-servicio.component';
 import { ReporteServicioDetalleComponent } from './reportes/reporte-servicio-detalle/reporte-servicio-detalle.component';
+
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { ReporteServicioDetalleComponent } from './reportes/reporte-servicio-det
     HorarioExcepcionComponent,
     HorarioExcepcionEditComponent,
     BuscadorTipoProductoComponent,
+    HorarioExcepcionFisioComponent,
     ReporteServicioComponent,
     ReporteServicioDetalleComponent,
   ],
