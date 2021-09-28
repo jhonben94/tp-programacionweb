@@ -9,7 +9,11 @@ import {
   deleteEmptyData,
 } from "../../utlis";
 import { startWith, switchMap, catchError, map } from "rxjs/operators";
-import { CategoriaService, TipoProductoService } from "src/app/services";
+import {
+  CategoriaService,
+  TipoProductoService,
+  ExportService,
+} from "src/app/services";
 import { MatDialog } from "@angular/material/dialog";
 import swal from "sweetalert2";
 import { ReservasService } from "src/app/services/reservas.service";
@@ -129,7 +133,8 @@ export class ReservasComponent implements OnInit {
     private fb: FormBuilder,
     private service: ReservasService,
     public dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private exportarService: ExportService
   ) {
     this.filtrosForm = this.fb.group({
       fechaDesde: [""],
@@ -306,33 +311,6 @@ export class ReservasComponent implements OnInit {
   }
 
   downloadPdf() {
-    let prepare = [];
-    this.data.forEach((e) => {
-      var tempObj = [];
-      this.listaColumnas.forEach((element) => {
-        tempObj.push(this.mostrarCampo(e, element));
-      });
-
-      prepare.push(tempObj);
-    });
-
-    let columnas = [];
-    this.listaColumnas.forEach((item) => {
-      columnas.push(item.descripcion);
-    });
-
-    const doc = new jsPDF("l", "mm", "a4");
-    console.table(columnas, prepare);
-
-    const head = [columnas];
-    const data = prepare;
-
-    autoTable(doc, {
-      head: head,
-      body: data,
-      didDrawCell: (data) => {},
-    });
-    const date = new Date();
-    doc.save("reservas" + date.getMilliseconds() + ".pdf");
+    this.exportarService.downloadPdf(this.data, this.listaColumnas);
   }
 }
